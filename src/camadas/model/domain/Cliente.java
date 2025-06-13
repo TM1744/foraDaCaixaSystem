@@ -15,7 +15,10 @@ public class Cliente {
         return nome;
     }
 
-    public void setNome(String nome) {
+    public void setNome(String nome) throws IllegalArgumentException{
+        if(nome.trim() == null || nome.trim() == ""){
+            throw new IllegalArgumentException("Nome não pode ser vazio");
+        }
         this.nome = nome.toUpperCase();
     }
 
