@@ -1,14 +1,16 @@
 package camadas.model.domain;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Produto {
     private String descricao;
     private Float valor;
-    private List<ItemMaterial> materiais = new ArrayList<>();
+    private Set<ItemMaterial> materiais = new HashSet<>();
 
-    public Produto(String descricao, Float valor, List<ItemMaterial> materiais) {
+    public Produto(String descricao, Float valor, Set<ItemMaterial> materiais) {
         this.setDescricao(descricao);
         this.setValor(valor);
         this.materiais = materiais;
@@ -18,7 +20,10 @@ public class Produto {
         return descricao;
     }
 
-    public void setDescricao(String descricao) {
+    public void setDescricao(String descricao) throws IllegalArgumentException{
+        if (descricao.trim() == null){
+            throw new IllegalArgumentException("Descrição nula");
+        }
         this.descricao = descricao.toUpperCase();
     }
 
@@ -36,11 +41,22 @@ public class Produto {
         }
     }
 
-    public List<ItemMaterial> getMateriais() {
+    public Set<ItemMaterial> getMateriais() {
         return materiais;
     }
 
-    public void setMateriais(List<ItemMaterial> materiais) {
+    public void setMateriais(Set<ItemMaterial> materiais) throws IllegalArgumentException {
         this.materiais = materiais;
+    }
+
+    public void addMateriais(ItemMaterial materiais) throws IllegalArgumentException{
+        for(ItemMaterial material : this.materiais){
+            if(material.getMaterial().getDescricao() == materiais.getMaterial().getDescricao()) {
+                throw new IllegalArgumentException("Material já utilizado");
+            }
+        }
+        if (!this.materiais.add(materiais)) {
+            throw new IllegalArgumentException("Materiais repetidos");
+        }
     }
 }

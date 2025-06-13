@@ -14,6 +14,9 @@ public class Material {
     }
 
     public void setDescricao(String descricao) {
+        if (descricao.trim() == null){
+            throw new IllegalArgumentException("Descrição nula");
+        }
         this.descricao = descricao.toUpperCase();
     }
 

@@ -21,7 +21,7 @@ public class ItemMaterial {
         return quantidade;
     }
 
-    public void setQuantidade(Integer quantidade) {
+    public void setQuantidade(Integer quantidade) throws IllegalArgumentException {
         if (quantidade < 0){
             this.quantidade = quantidade * (-1);
         } else if (quantidade == 0) {
