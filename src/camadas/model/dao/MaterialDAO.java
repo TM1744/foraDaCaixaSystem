@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MaterialDAO {
+    /*
     public void create(Material material) throws SQLException {
         Database db = new Database();
         PreparedStatement stm = db.connection.prepareStatement("insert into materiais (descricao, valor) values (?, ?)");
@@ -60,4 +61,5 @@ public class MaterialDAO {
         stm.close();
         db.close();
     }
+    */
 }
