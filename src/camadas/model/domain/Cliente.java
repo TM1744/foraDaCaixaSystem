@@ -4,11 +4,13 @@ public class Cliente {
     private String nome;
     private String telefone;
     private String endereco;
+    private String cod;
 
     public Cliente(String nome, String telefone, String endereco) {
         this.setNome(nome);
         this.telefone = telefone;
         this.endereco = endereco;
+        this.setCod();
     }
 
     public String getNome() {
@@ -36,5 +38,13 @@ public class Cliente {
 
     public void setEndereco(String endereco) {
         this.endereco = endereco;
+    }
+
+    public String getCod() {
+        return cod;
+    }
+
+    public void setCod() {
+        this.cod = cod;
     }
 }
