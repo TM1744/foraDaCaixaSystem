@@ -22,6 +22,20 @@ public class Cliente {
 
     }
 
+    public Cliente(Cliente cliente){
+        this.nome = cliente.getNome();
+        this.telefone = cliente.getTelefone();
+        this.endereco = cliente.getEndereco();
+        this.cod = cliente.getCod();
+    }
+
+    public Cliente(String nome, String telefone, String endereco, String cod) {
+        this.nome = nome;
+        this.telefone = telefone;
+        this.endereco = endereco;
+        this.cod = cod;
+    }
+
     public String getNome() {
         return nome;
     }

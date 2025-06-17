@@ -29,7 +29,12 @@ public class ClienteController {
 
     public void updateCliente(){
         try{
-
+            Cliente cliente0 = new Cliente(dao.get(view.readCod()));
+            Cliente cliente1 = new Cliente(view.updateNome(cliente0), view.updateTelefone(cliente0), view.updateEndereco(cliente0), cliente0.getCod());
+            dao.update(cliente1);
+            view.sucessoUpdate(cliente0, cliente1);
+        } catch (RuntimeException e){
+            view.falhaUpdate(e);
         }
     }
 }

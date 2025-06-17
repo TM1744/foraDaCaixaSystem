@@ -81,4 +81,17 @@ public class ClienteView {
         printTelefone(cliente);
         return readTelefone();
     }
+
+    public void sucessoUpdate(Cliente cliente0, Cliente cliente1){
+        System.out.println("Cliente atualizado com sucesso!");
+        System.out.println("Cliente anteriormente: ");
+        exibirCliente(cliente0);
+        System.out.println("Cliente atualmente: ");
+        exibirCliente(cliente1);
+    }
+
+    public void falhaUpdate(RuntimeException e){
+        System.out.println("Falha ao atualizar cliente!");
+        System.err.println(e.getMessage());
+    }
 }

@@ -15,7 +15,7 @@ public class ClienteDao {
     public void getList(){
 
     }
-    public void update(String cod){
+    public void update(Cliente cliente){
 
     }
 }
