@@ -9,7 +9,7 @@ public class ClienteDao {
     public void delete (String cod) throws RuntimeException{
 
     }
-    public void get (String cod){
+    public Cliente get (String cod){
 
     }
     public void getList(){

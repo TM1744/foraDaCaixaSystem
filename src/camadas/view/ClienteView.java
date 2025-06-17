@@ -8,9 +8,21 @@ public class ClienteView {
     private Scanner scanner = new Scanner(System.in);
 
     public void exibirCliente(Cliente cliente){
+        System.out.println("---Cliente:");
+        printNome(cliente);
+        printTelefone(cliente);
+        printEndereco(cliente);
+        System.out.println("------------------------------------------------------------------");
+    }
+
+    public void printNome(Cliente cliente){
         System.out.println("Nome: " + cliente.getNome());
+    }
+    public void printEndereco(Cliente cliente){
+        System.out.println("Endereço: " + cliente.getEndereco());
+    }
+    public void printTelefone(Cliente cliente){
         System.out.println("Telefone: " + cliente.getTelefone());
-        System.out.println("endereco: " + cliente.getEndereco());
     }
 
     public String readNome(){
@@ -50,5 +62,23 @@ public class ClienteView {
     public void falhaDelete(RuntimeException e){
         System.out.println("Falha ao deletar cliente!");
         System.err.println(e.getMessage());
+    }
+
+    public String updateNome(Cliente cliente){
+        System.out.println("Nome atual do cliente: ");
+        printNome(cliente);
+        return readNome();
+    }
+
+    public String updateEndereco(Cliente cliente){
+        System.out.println("Endereço atual do cliente: ");
+        printEndereco(cliente);
+        return readEndereco();
+    }
+
+    public String updateTelefone(Cliente cliente){
+        System.out.println("Telefone atual do cliente: ");
+        printTelefone(cliente);
+        return readTelefone();
     }
 }
