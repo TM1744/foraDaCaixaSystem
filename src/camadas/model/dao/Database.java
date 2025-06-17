@@ -15,7 +15,7 @@ public final class Database {
                     create table if not exists Clientes (
                     	id serial primary key,
                     	nome varchar(250) not null,
-                    	telefone varchar(250) not null unique,
+                    	telefone varchar(11) not null unique,
                     	endereco varchar(250) not null
                     );
                     """);

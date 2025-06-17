@@ -26,4 +26,10 @@ public class ClienteController {
             view.falhaDelete(e);
         }
     }
+
+    public void updateCliente(){
+        try{
+
+        }
+    }
 }
