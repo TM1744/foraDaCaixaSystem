@@ -5,18 +5,20 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public final class Database {
+    public Connection connection;
+    private final String dns = "jdbc:sqlite:bancoDeDados/base.db";
 
     public Database(){
         try {
-            Connection connection;
-            connection = DriverManager.getConnection("jdbc:sqlite:bancoDeDados/base.db");
+            this.connection = DriverManager.getConnection(dns);
             Statement stm = connection.createStatement();
             stm.executeUpdate("""
                     create table if not exists Clientes (
                     	id serial primary key,
                     	nome varchar(250) not null,
                     	telefone varchar(11) not null unique,
-                    	endereco varchar(250) not null
+                    	endereco varchar(250) not null,
+                    	cod int not null unique
                     );
                     """);
             stm.executeUpdate("""

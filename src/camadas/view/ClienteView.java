@@ -2,17 +2,24 @@ package camadas.view;
 
 import camadas.model.domain.Cliente;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class ClienteView {
     private Scanner scanner = new Scanner(System.in);
 
-    public void exibirCliente(Cliente cliente){
-        System.out.println("---Cliente:");
+    public void printCliente(Cliente cliente){
+        System.out.println("\n---Cliente:");
         printNome(cliente);
         printTelefone(cliente);
         printEndereco(cliente);
-        System.out.println("------------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------------\n");
+    }
+
+    public void printClienteList(List<Cliente> clientes){
+        for (Cliente cliente : clientes){
+            printCliente(cliente);
+        }
     }
 
     public void printNome(Cliente cliente){
@@ -40,9 +47,11 @@ public class ClienteView {
         return scanner.next();
     }
 
-    public void sucessoCadastro(Cliente cliente){
+    public boolean sucessoCadastro(Cliente cliente){
         System.out.println("Cliente cadastrado com sucesso!\n");
-        exibirCliente(cliente);
+        printCliente(cliente);
+        System.out.println("\nDeseja cadastrar mais um cliente?(1 para sim /0 para não)");
+        return scanner.nextBoolean();
     }
 
     public void falhaCadastro(RuntimeException e) {
@@ -55,8 +64,10 @@ public class ClienteView {
         return scanner.next();
     }
 
-    public void sucessoDelete(){
+    public boolean sucessoDelete(){
         System.out.println("Cliente deletado com sucesso!");
+        System.out.println("\nDeseja deletar mais um cliente?(1 para sim /0 para não)");
+        return scanner.nextBoolean();
     }
 
     public void falhaDelete(RuntimeException e){
@@ -82,12 +93,14 @@ public class ClienteView {
         return readTelefone();
     }
 
-    public void sucessoUpdate(Cliente cliente0, Cliente cliente1){
+    public boolean sucessoUpdate(Cliente cliente0, Cliente cliente1) {
         System.out.println("Cliente atualizado com sucesso!");
         System.out.println("Cliente anteriormente: ");
-        exibirCliente(cliente0);
+        printCliente(cliente0);
         System.out.println("Cliente atualmente: ");
-        exibirCliente(cliente1);
+        printCliente(cliente1);
+        System.out.println("\nDeseja atualizar mais um cliente?(1 para sim /0 para não)");
+        return scanner.nextBoolean();
     }
 
     public void falhaUpdate(RuntimeException e){
