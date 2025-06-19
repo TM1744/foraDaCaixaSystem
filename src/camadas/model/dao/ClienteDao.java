@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClienteDao {
+
     public void create (Cliente cliente) throws RuntimeException{
         try{
             Database db = new Database();

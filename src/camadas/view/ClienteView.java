@@ -6,14 +6,15 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ClienteView {
-    private Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner = new Scanner(System.in);
 
     public void printCliente(Cliente cliente){
         System.out.println("\n---Cliente:");
         printNome(cliente);
         printTelefone(cliente);
         printEndereco(cliente);
-        System.out.println("------------------------------------------------------------------\n");
+        printCod(cliente);
+        System.out.println("------------------------------------------------------------------");
     }
 
     public void printClienteList(List<Cliente> clientes){
@@ -31,20 +32,23 @@ public class ClienteView {
     public void printTelefone(Cliente cliente){
         System.out.println("Telefone: " + cliente.getTelefone());
     }
+    public void printCod(Cliente cliente){
+        System.out.println("Cod: " + cliente.getCod());
+    }
 
     public String readNome(){
         System.out.println("Informe o nome do cliente: ");
-        return scanner.next();
+        return scanner.nextLine();
     }
 
     public String readTelefone(){
         System.out.println("Informe o telefone do cliente: ");
-        return scanner.next();
+        return scanner.nextLine();
     }
 
     public String readEndereco(){
         System.out.println("Informe o endereço do cliente: ");
-        return scanner.next();
+        return scanner.nextLine();
     }
 
     public boolean sucessoCadastro(Cliente cliente){
@@ -61,7 +65,7 @@ public class ClienteView {
 
     public String readCod(){
         System.out.println("Informe o COD do cliente: ");
-        return scanner.next();
+        return scanner.nextLine();
     }
 
     public boolean sucessoDelete(){
@@ -105,6 +109,16 @@ public class ClienteView {
 
     public void falhaUpdate(RuntimeException e){
         System.out.println("Falha ao atualizar cliente!");
+        System.err.println(e.getMessage());
+    }
+
+    public void falhaSearch(RuntimeException e){
+        System.out.println("Falha ao procurar cliente: ");
+        System.err.println(e.getMessage());
+    }
+
+    public void falhaGetList(RuntimeException e){
+        System.out.println("Falha ao buscar todos os clientes no banco de dados:");
         System.err.println(e.getMessage());
     }
 }

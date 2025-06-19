@@ -6,7 +6,7 @@ import java.sql.Statement;
 
 public final class Database {
     public Connection connection;
-    private final String dns = "jdbc:sqlite:bancoDeDados/base.db";
+    private final String dns = "jdbc:sqlite:bancoDeDados/banco/base.db";
 
     public Database(){
         try {

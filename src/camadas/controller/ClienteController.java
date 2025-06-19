@@ -4,9 +4,11 @@ import camadas.model.dao.ClienteDao;
 import camadas.model.domain.Cliente;
 import camadas.view.ClienteView;
 
+import java.sql.SQLException;
+
 public class ClienteController {
-    private ClienteView view;
-    private ClienteDao dao;
+    private ClienteView view = new ClienteView();
+    private ClienteDao dao = new ClienteDao();
 
     public void cadastrar(){
         try{
@@ -22,6 +24,7 @@ public class ClienteController {
 
     public void deletar(){
         try{
+            search();
             view.printClienteList(dao.getSearch(view.readNome()));
             do{
                 dao.delete(view.readCod());
@@ -33,7 +36,7 @@ public class ClienteController {
 
     public void update(){
         try {
-            view.printClienteList(dao.getSearch(view.readNome()));
+            search();
             Cliente cliente0;
             Cliente cliente1;
             do {
@@ -43,6 +46,22 @@ public class ClienteController {
             } while (view.sucessoUpdate(cliente0, cliente1));
         } catch (RuntimeException e){
             view.falhaUpdate(e);
+        }
+    }
+
+    public void search(){
+        try{
+            view.printClienteList(dao.getSearch(view.readNome()));
+        } catch (RuntimeException e){
+            view.falhaSearch(e);
+        }
+    }
+
+    public void getList (){
+        try{
+            view.printClienteList(dao.getList());
+        } catch (RuntimeException e){
+            view.falhaGetList(e);
         }
     }
 }

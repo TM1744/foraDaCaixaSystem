@@ -15,7 +15,7 @@ public class Cliente {
             this.setNome(nome);
             this.setEndereco(endereco);
             this.setTelefone(telefone);
-            this.setCod(telefone, 6);
+            this.setCod(telefone + nome, 6);
         } catch (RuntimeException e){
             throw new RuntimeException("Erro ao instanciar classe: " + e);
         }
@@ -62,8 +62,11 @@ public class Cliente {
         if(telefone.isBlank()) {
             throw new IllegalArgumentException("Número de telefone não pode ser vazio");
         }
-        if(telefone.length() < 10 || (telefone.charAt(2) != 9 && telefone.length() == 11)){
-            throw new IllegalArgumentException("Não é um número de telefone ou está faltando um 9");
+        if(telefone.length() < 10){
+            throw new IllegalArgumentException("Não é um número de telefone");
+        }
+        if(telefone.charAt(2) != '9' && telefone.length() == 11){
+            throw new IllegalArgumentException("Falta um 9 no número");
         }
         this.telefone = telefone;
     }
