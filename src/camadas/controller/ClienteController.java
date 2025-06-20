@@ -25,7 +25,6 @@ public class ClienteController {
     public void deletar(){
         try{
             search();
-            view.printClienteList(dao.getSearch(view.readNome()));
             do{
                 dao.delete(view.readCod());
             } while (view.sucessoDelete());

@@ -37,17 +37,29 @@ public class ClienteDao {
             throw new RuntimeException(e);
         }
     }
-    public Cliente get (String cod) throws RuntimeException{
-        try{
+    public Cliente get(String cod) throws RuntimeException {
+        try {
             Database db = new Database();
-            PreparedStatement stm = db.connection.prepareStatement("select * from clientes where cod = ?");
+            PreparedStatement stm = db.connection.prepareStatement("SELECT * FROM clientes WHERE cod = ?");
             stm.setString(1, cod);
             ResultSet result = stm.executeQuery();
-            stm.close();
+
+            Cliente cliente = null;
+            if (result.next()) {
+                cliente = new Cliente(
+                        result.getString("nome"),
+                        result.getString("telefone"),
+                        result.getString("endereco"),
+                        result.getString("cod")
+                );
+            }
+
             result.close();
+            stm.close();
             db.connection.close();
-            return new Cliente(result.getString("nome"), result.getString("telefone"), result.getString("endereco"), result.getString("cod"));
-        } catch (SQLException e){
+
+            return cliente; // pode retornar null se não encontrar
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
@@ -76,6 +88,8 @@ public class ClienteDao {
             stm.setString(3, cliente.getEndereco());
             stm.setString(4, cliente.getCod());
             stm.executeUpdate();
+            stm.close();
+            db.connection.close();
         }catch (SQLException e){
             throw new RuntimeException(e);
         }
@@ -84,8 +98,8 @@ public class ClienteDao {
     public List<Cliente> getSearch(String nome) throws RuntimeException{
         try{
             Database db = new Database();
-            PreparedStatement stm = db.connection.prepareStatement("select * from clientes where nome like '%?%';");
-            stm.setString(1, nome);
+            PreparedStatement stm = db.connection.prepareStatement("select * from clientes where nome like ?;");
+            stm.setString(1, "%" + nome.toUpperCase() + "%");
             ResultSet result = stm.executeQuery();
             List<Cliente> clientes = new ArrayList<>();
             while (result.next()){

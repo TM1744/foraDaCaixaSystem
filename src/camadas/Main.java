@@ -1,6 +1,7 @@
 package camadas;
 
 import camadas.controller.ClienteController;
+import camadas.model.dao.ClienteDao;
 import camadas.model.dao.Database;
 import camadas.model.domain.Cliente;
 import camadas.view.ClienteView;
@@ -11,11 +12,11 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Database db = new Database();
+        function1();
     }
 
 
-    public void function1() {
+    public static void function1() {
         ClienteController controller = new ClienteController();
 
         Scanner scanner = new Scanner(System.in);
@@ -83,4 +84,5 @@ public class Main {
             }
         } while (opcao != 0);
     }
+
 }

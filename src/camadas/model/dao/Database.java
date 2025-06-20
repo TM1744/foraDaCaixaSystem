@@ -13,71 +13,77 @@ public final class Database {
             this.connection = DriverManager.getConnection(dns);
             Statement stm = connection.createStatement();
             stm.executeUpdate("""
-                    create table if not exists Clientes (
-                    	id serial primary key,
-                    	nome varchar(250) not null,
-                    	telefone varchar(11) not null unique,
-                    	endereco varchar(250) not null,
-                    	cod int not null unique
-                    );
-                    """);
+            CREATE TABLE IF NOT EXISTS Clientes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            telefone TEXT NOT NULL UNIQUE,
+            endereco TEXT NOT NULL,
+            cod INTEGER NOT NULL UNIQUE
+            );
+            """);
+
             stm.executeUpdate("""
-                    create table if not exists Materiais (
-                    	id serial primary key,
-                    	descricao varchar(250) not null,
-                    	valor money not null check (valor > 0::money)
-                    );
-                    """);
+            CREATE TABLE IF NOT EXISTS Materiais (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            descricao TEXT NOT NULL,
+            valor REAL NOT NULL CHECK (valor > 0)
+            );
+            """);
+
             stm.executeUpdate("""
-                    create table if not exists ItemMaterial (
-                    	id serial primary key,
-                    	idMaterial int not null,
-                    	quantidade int check(quantidade > 0),
-                    	foreign key (idMaterial) references Materiais(id)
-                    );
-                    """);
+            CREATE TABLE IF NOT EXISTS ItemMaterial (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            idMaterial INTEGER NOT NULL,
+            quantidade INTEGER CHECK(quantidade > 0),
+            FOREIGN KEY (idMaterial) REFERENCES Materiais(id)
+            );
+            """);
+
             stm.executeUpdate("""
-                    create table if not exists Produtos (
-                    	id serial primary key,
-                    	descricao varchar(250) not null,
-                    	valor money check(valor > 0::money) not null
-                    );
-                    """);
+            CREATE TABLE IF NOT EXISTS Produtos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            descricao TEXT NOT NULL,
+            valor REAL NOT NULL CHECK(valor > 0)
+            );
+            """);
+
             stm.executeUpdate("""
-                    create table if not exists Produto_ItemMaterial (
-                    	id serial primary key,
-                    	idProduto int not null,
-                    	idItemMaterial int not null,
-                    	foreign key (idProduto) references Produtos (id),
-                    	foreign key (idItemMaterial) references ItemMaterial (id)
-                    );
-                    """);
+            CREATE TABLE IF NOT EXISTS Produto_ItemMaterial (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            idProduto INTEGER NOT NULL,
+            idItemMaterial INTEGER NOT NULL,
+            FOREIGN KEY (idProduto) REFERENCES Produtos(id),
+            FOREIGN KEY (idItemMaterial) REFERENCES ItemMaterial(id)
+            );
+            """);
+
             stm.executeUpdate("""
-                    create table if not exists Vendas (
-                    	id serial primary key,
-                    	idCliente int not null,
-                    	valorTotal money not null check (valorTotal > 0::money),
-                    	dataEntrega date,
-                    	foreign key (idCliente) references Clientes (id)
-                    );
-                    """);
+            CREATE TABLE IF NOT EXISTS Vendas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            idCliente INTEGER NOT NULL,
+            valorTotal REAL NOT NULL CHECK (valorTotal > 0),
+            dataEntrega DATE,
+            FOREIGN KEY (idCliente) REFERENCES Clientes(id)
+            );
+            """);
+
             stm.executeUpdate("""
-                    create table if not exists ItemProduto (
-                    	id serial primary key,
-                    	idProduto int not null,
-                    	quantidade int not null check(quantidade > 0),
-                    	foreign key (idProduto) references Produtos(id)
-                    );
-                    """);
+            CREATE TABLE IF NOT EXISTS ItemProduto (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            idProduto INTEGER NOT NULL,
+            quantidade INTEGER NOT NULL CHECK(quantidade > 0),
+            FOREIGN KEY (idProduto) REFERENCES Produtos(id)
+            );
+            """);
             stm.executeUpdate("""
-                    create table if not exists Venda_ItemProduto (
-                    	id serial primary key,
-                    	idVenda int not null,
-                    	idItemProduto int not null,
-                    	foreign key (idVenda) references Vendas(id),
-                    	foreign key (idItemProduto) references ItemProduto(id)
-                    );
-                    """);
+            CREATE TABLE IF NOT EXISTS Venda_ItemProduto (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            idVenda INTEGER NOT NULL,
+            idItemProduto INTEGER NOT NULL,
+            FOREIGN KEY (idVenda) REFERENCES Vendas(id),
+            FOREIGN KEY (idItemProduto) REFERENCES ItemProduto(id)
+            );
+            """);
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
