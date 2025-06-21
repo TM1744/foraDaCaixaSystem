@@ -29,13 +29,6 @@ public class Cliente {
         this.cod = cliente.getCod();
     }
 
-    public Cliente(String nome, String telefone, String endereco, String cod) {
-        this.nome = nome;
-        this.telefone = telefone;
-        this.endereco = endereco;
-        this.cod = cod;
-    }
-
     public String getNome() {
         return nome;
     }
@@ -80,9 +73,9 @@ public class Cliente {
             throw new IllegalArgumentException("Endereço não pode ter mais de 250 caracteres");
         }
         if(endereco.isBlank()){
-            this.endereco = "Endereço não informado";
+            this.endereco = "ENDEREÇO NÃO INFORMADO";
         } else {
-            this.endereco = endereco;
+            this.endereco = endereco.toUpperCase();
         }
     }
 

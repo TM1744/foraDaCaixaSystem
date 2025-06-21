@@ -51,11 +51,9 @@ public class ClienteView {
         return scanner.nextLine();
     }
 
-    public boolean sucessoCadastro(Cliente cliente){
+    public void sucessoCadastro(Cliente cliente){
         System.out.println("Cliente cadastrado com sucesso!\n");
         printCliente(cliente);
-        System.out.println("\nDeseja cadastrar mais um cliente?(1 para sim /0 para não)");
-        return scanner.nextBoolean();
     }
 
     public void falhaCadastro(RuntimeException e) {
@@ -68,10 +66,8 @@ public class ClienteView {
         return scanner.nextLine();
     }
 
-    public boolean sucessoDelete(){
+    public void sucessoDelete(){
         System.out.println("Cliente deletado com sucesso!");
-        System.out.println("\nDeseja deletar mais um cliente?(1 para sim /0 para não)");
-        return scanner.nextBoolean();
     }
 
     public void falhaDelete(RuntimeException e){
@@ -97,14 +93,12 @@ public class ClienteView {
         return readTelefone();
     }
 
-    public boolean sucessoUpdate(Cliente cliente0, Cliente cliente1) {
+    public void sucessoUpdate(Cliente cliente0, Cliente cliente1) {
         System.out.println("Cliente atualizado com sucesso!");
         System.out.println("Cliente anteriormente: ");
         printCliente(cliente0);
         System.out.println("Cliente atualmente: ");
         printCliente(cliente1);
-        System.out.println("\nDeseja atualizar mais um cliente?(1 para sim /0 para não)");
-        return scanner.nextBoolean();
     }
 
     public void falhaUpdate(RuntimeException e){

@@ -79,14 +79,15 @@ public class ClienteDao {
         }
 
     }
-    public void update(Cliente cliente) throws RuntimeException{
+    public void update(Cliente cliente1, String codigo) throws RuntimeException{
         try{
             Database db = new Database();
-            PreparedStatement stm = db.connection.prepareStatement("update clientes set nome = ?, telefone = ?, endereco = ? where cod = ?");
-            stm.setString(1, cliente.getNome());
-            stm.setString(2, cliente.getTelefone());
-            stm.setString(3, cliente.getEndereco());
-            stm.setString(4, cliente.getCod());
+            PreparedStatement stm = db.connection.prepareStatement("update clientes set nome = ?, telefone = ?, endereco = ?, cod = ? where cod = ?");
+            stm.setString(1, cliente1.getNome());
+            stm.setString(2, cliente1.getTelefone());
+            stm.setString(3, cliente1.getEndereco());
+            stm.setString(4, cliente1.getCod());
+            stm.setString(5, codigo);
             stm.executeUpdate();
             stm.close();
             db.connection.close();
