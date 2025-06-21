@@ -27,6 +27,7 @@ public final class Database {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             descricao TEXT NOT NULL,
             valor REAL NOT NULL CHECK (valor > 0)
+            cod INTEGER NOT NULL UNIQUE
             );
             """);
 
@@ -44,6 +45,7 @@ public final class Database {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             descricao TEXT NOT NULL,
             valor REAL NOT NULL CHECK(valor > 0)
+            cod INTEGER NOT NULL UNIQUE
             );
             """);
 
@@ -63,6 +65,7 @@ public final class Database {
             idCliente INTEGER NOT NULL,
             valorTotal REAL NOT NULL CHECK (valorTotal > 0),
             dataEntrega DATE,
+            cod INTEGER NOT NULL UNIQUE
             FOREIGN KEY (idCliente) REFERENCES Clientes(id)
             );
             """);
