@@ -3,6 +3,7 @@ package camadas.model.domain;
 public class ItemMaterial {
     private Material material;
     private Integer quantidade;
+    private String cod;
 
     public ItemMaterial(Material material, Integer quantidade) {
         this.material = material;
