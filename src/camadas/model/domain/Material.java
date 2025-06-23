@@ -21,10 +21,11 @@ public class Material {
         }
     }
 
-    public Material(String descricao, Float valor, String cod) {
+    public Material(String descricao, Float valor, String cod, Integer quantidadeEstoque) {
         this.descricao = descricao;
         this.valor = valor;
         this.cod = cod;
+        this.quantidadeEstoque = quantidadeEstoque;
     }
 
     public String getDescricao() {

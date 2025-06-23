@@ -5,4 +5,6 @@ public class MaterialView {
         System.out.println("Descrição: " + descricao);
         System.out.println("Valor: " + valor);
     }
+
+
 }

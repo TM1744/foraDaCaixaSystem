@@ -13,10 +13,11 @@ public class MaterialDao {
     public void create (Material material){
         try{
             Database db = new Database();
-            PreparedStatement stm = db.connection.prepareStatement("insert into materiais (descricao, valor, cod) values (?, ?, ?);");
+            PreparedStatement stm = db.connection.prepareStatement("insert into materiais (descricao, valor, cod, quantidadeEstoque) values (?, ?, ?, ?);");
             stm.setString(1, material.getDescricao());
             stm.setFloat(2, material.getValor());
             stm.setString(3, material.getCod());
+            stm.setInt(4, material.getQuantidadeEstoque());
             stm.executeUpdate();
             stm.close();
             db.connection.close();
@@ -44,7 +45,7 @@ public class MaterialDao {
             PreparedStatement stm = db.connection.prepareStatement("select * from materiais where cod = ?;");
             stm.setString(1, cod);
             ResultSet result = stm.executeQuery();
-            Material material = new Material(result.getString("descricao"), result.getFloat("valor"), result.getString("cod"));
+            Material material = new Material(result.getString("descricao"), result.getFloat("valor"), result.getString("cod"), result.getInt("quantidadeEstoque"));
             stm.close();
             result.close();
             db.connection.close();
@@ -60,7 +61,7 @@ public class MaterialDao {
             ResultSet result = db.connection.createStatement().executeQuery("select * from materiais;");
             List<Material> materiais = new ArrayList<>();
             while (result.next()){
-                Material material = new Material(result.getString("descricao"), result.getFloat("valor"), result.getString("cod"));
+                Material material = new Material(result.getString("descricao"), result.getFloat("valor"), result.getString("cod"), result.getInt("quantidadeEstoque"));
                 materiais.add(material);
             }
             result.close();
@@ -95,7 +96,7 @@ public class MaterialDao {
             ResultSet result = stm.executeQuery();
             List<Material> materiais = new ArrayList<>();
             while(result.next()){
-                Material material = new Material(result.getString("descricao"), result.getFloat("valor"), result.getString("cod"));
+                Material material = new Material(result.getString("descricao"), result.getFloat("valor"), result.getString("cod"), result.getInt("quantidadeEstoque"));
                 materiais.add(material);
             }
             result.close();
