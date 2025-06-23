@@ -26,7 +26,8 @@ public final class Database {
             CREATE TABLE IF NOT EXISTS Materiais (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             descricao TEXT NOT NULL,
-            valor REAL NOT NULL CHECK (valor > 0)
+            valor REAL NOT NULL CHECK (valor > 0),
+            quantidadeEstoque integer not null check,
             cod INTEGER NOT NULL UNIQUE
             );
             """);

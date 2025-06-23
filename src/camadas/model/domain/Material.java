@@ -8,11 +8,17 @@ public class Material {
     private String descricao;
     private Float valor;
     private String cod;
+    private Integer quantidadeEstoque = 0;
 
-    public Material(String descricao, Float valor) {
-        this.setDescricao(descricao);
-        this.setValor(valor);
-        this.setCod(valor.toString() + descricao, 6);
+    public Material(String descricao, Float valor, Integer quantidadeEstoque) throws RuntimeException{
+        try{
+            this.setDescricao(descricao);
+            this.setValor(valor);
+            this.setQuantidadeEstoque(quantidadeEstoque);
+            this.setCod(valor.toString() + descricao, 6);
+        } catch (RuntimeException e){
+            throw new RuntimeException(e);
+        }
     }
 
     public Material(String descricao, Float valor, String cod) {
@@ -25,7 +31,7 @@ public class Material {
         return descricao;
     }
 
-    public void setDescricao(String descricao) {
+    public void setDescricao(String descricao) throws IllegalArgumentException{
         if (descricao.trim().isEmpty()){
             throw new IllegalArgumentException("Descrição não pode ser nula");
         }
@@ -36,15 +42,14 @@ public class Material {
         return valor;
     }
 
-    public void setValor(Float valor) {
-        if (valor < 0){
-            this.valor = valor * (-1);
-        }
+    public void setValor(Float valor) throws IllegalArgumentException{
         if (valor.isInfinite()){
             throw new IllegalArgumentException("Valor de material não pode ser infinito");
         }
         if (valor == 0){
             throw new IllegalArgumentException("Valor de material não pode ser 0.");
+        } else  if(valor < 0){
+            this.valor = valor * (-1);
         } else {
             this.valor = valor;
         }
@@ -52,6 +57,17 @@ public class Material {
 
     public String getCod() {
         return cod;
+    }
+
+    public Integer getQuantidadeEstoque() {
+        return quantidadeEstoque;
+    }
+
+    public void setQuantidadeEstoque(Integer quantidadeEstoque) throws IllegalArgumentException {
+        if(quantidadeEstoque < 0){
+            throw new IllegalArgumentException("Quantidade no estoque não pode ser negativa");
+        }
+        this.quantidadeEstoque = quantidadeEstoque;
     }
 
     public void setCod(String valorBase, Integer base) throws RuntimeException {

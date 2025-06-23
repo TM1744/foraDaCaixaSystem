@@ -87,5 +87,23 @@ public class MaterialDao {
         }
     }
 
-    public List<Material> search(String descricao){}
+    public List<Material> getSearch(String descricao){
+        try{
+            Database db = new Database();
+            PreparedStatement stm = db.connection.prepareStatement("select * from materiais where descricao like ?");
+            stm.setString(1, "%" + descricao + "%");
+            ResultSet result = stm.executeQuery();
+            List<Material> materiais = new ArrayList<>();
+            while(result.next()){
+                Material material = new Material(result.getString("descricao"), result.getFloat("valor"), result.getString("cod"));
+                materiais.add(material);
+            }
+            result.close();
+            stm.close();
+            db.connection.close();
+            return materiais;
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
 }
