@@ -5,8 +5,8 @@ import camadas.model.domain.Material;
 import camadas.view.MaterialView;
 
 public class MaterialController {
-    private MaterialDao dao = new MaterialDao();
-    private MaterialView view = new MaterialView();
+    private final MaterialDao dao = new MaterialDao();
+    private final MaterialView view = new MaterialView();
 
     public void cadastrar(){
         try{
@@ -31,7 +31,7 @@ public class MaterialController {
         try{
             search();
             Material material0 = new Material(dao.get(view.readCod()));
-            Material material1 = new Material(view.updateDescricao(), view.updateValor(), material0.getQuantidadeEstoque());
+            Material material1 = new Material(view.updateDescricao(material0.getDescricao()), view.updateValor(material0.getValor()), material0.getQuantidadeEstoque());
             dao.update(material0.getCod(), material1);
             view.sucessoUpdate(material0, material1);
         }catch (RuntimeException e){

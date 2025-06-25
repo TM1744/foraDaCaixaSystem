@@ -28,6 +28,13 @@ public class Material {
         this.quantidadeEstoque = quantidadeEstoque;
     }
 
+    public Material(Material material) {
+        this.descricao = material.getDescricao();
+        this.valor = material.getValor();
+        this.cod = material.getCod();
+        this.quantidadeEstoque = material.getQuantidadeEstoque();
+    }
+
     public String getDescricao() {
         return descricao;
     }
