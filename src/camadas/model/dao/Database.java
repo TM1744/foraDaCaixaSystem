@@ -37,6 +37,7 @@ public final class Database {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             idMaterial INTEGER NOT NULL,
             quantidade INTEGER CHECK(quantidade > 0),
+            cod integer not null unique,
             FOREIGN KEY (idMaterial) REFERENCES Materiais(id)
             );
             """);
