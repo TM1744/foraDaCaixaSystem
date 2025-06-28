@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ClienteView {
-    private final Scanner scanner = new Scanner(System.in);
+    private Scanner scanner = new Scanner(System.in);
 
     public void printCliente(Cliente cliente){
         System.out.println("\n---Cliente:");
@@ -37,16 +37,19 @@ public class ClienteView {
     }
 
     public String readNome(){
+        scanner = new Scanner(System.in);
         System.out.println("Informe o nome do cliente: ");
         return scanner.nextLine();
     }
 
     public String readTelefone(){
+        scanner = new Scanner(System.in);
         System.out.println("Informe o telefone do cliente: ");
         return scanner.nextLine();
     }
 
     public String readEndereco(){
+        scanner = new Scanner(System.in);
         System.out.println("Informe o endereço do cliente: ");
         return scanner.nextLine();
     }
@@ -62,6 +65,7 @@ public class ClienteView {
     }
 
     public String readCod(){
+        scanner = new Scanner(System.in);
         System.out.println("Informe o COD do cliente: ");
         return scanner.nextLine();
     }
@@ -76,18 +80,21 @@ public class ClienteView {
     }
 
     public String updateNome(Cliente cliente){
+        scanner = new Scanner(System.in);
         System.out.println("Nome atual do cliente: ");
         printNome(cliente);
         return readNome();
     }
 
     public String updateEndereco(Cliente cliente){
+        scanner = new Scanner(System.in);
         System.out.println("Endereço atual do cliente: ");
         printEndereco(cliente);
         return readEndereco();
     }
 
     public String updateTelefone(Cliente cliente){
+        scanner = new Scanner(System.in);
         System.out.println("Telefone atual do cliente: ");
         printTelefone(cliente);
         return readTelefone();

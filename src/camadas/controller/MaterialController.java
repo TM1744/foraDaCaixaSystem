@@ -4,6 +4,9 @@ import camadas.model.dao.MaterialDao;
 import camadas.model.domain.Material;
 import camadas.view.MaterialView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MaterialController {
     private final MaterialDao dao = new MaterialDao();
     private final MaterialView view = new MaterialView();
@@ -41,7 +44,12 @@ public class MaterialController {
 
     public void getList(){
         try{
-            view.printMaterialList(dao.getList());
+            List<Material> materials = dao.getList();
+            if(materials.isEmpty()){
+                view.notFound();
+            } else {
+                view.printMaterialList(materials);
+            }
         } catch (RuntimeException e){
             view.falhaGetList(e);
         }
@@ -49,7 +57,12 @@ public class MaterialController {
 
     public void search(){
         try {
-            view.printMaterialList(dao.getSearch(view.readDescricao()));
+            List<Material> lista = dao.getSearch(view.readDescricao());
+            if (lista.isEmpty()) {
+                view.notFound();
+            } else {
+                view.printMaterialList(lista);
+            }
         }catch (RuntimeException e){
             view.falhaSearch(e);
         }

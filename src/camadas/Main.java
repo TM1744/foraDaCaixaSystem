@@ -1,13 +1,9 @@
 package camadas;
 
 import camadas.controller.ClienteController;
-import camadas.model.dao.ClienteDao;
-import camadas.model.dao.Database;
-import camadas.model.domain.Cliente;
-import camadas.view.ClienteView;
+import camadas.controller.MaterialController;
+import camadas.model.domain.Material;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -17,7 +13,8 @@ public class Main {
 
 
     public static void function1() {
-        ClienteController controller = new ClienteController();
+        ClienteController clienteController = new ClienteController();
+        MaterialController materialController = new MaterialController();
 
         Scanner scanner = new Scanner(System.in);
         String menuPrincipal = """
@@ -40,6 +37,17 @@ public class Main {
                 - 0) Voltar...
                 ---------------------------\n
                 """;
+        String subMenuMateriais = """
+                ----------Materiais---------
+                - 1) Cadastrar
+                - 2) Atualizar
+                - 3) Deletar
+                - 4) Ver todos
+                - 5) Procurar
+                - 6) Definir quantidade em estoque
+                - 0) Voltar...
+                ---------------------------\n
+                """;
         Integer opcao = 0;
         Integer subOpcao = 0;
 
@@ -55,19 +63,19 @@ public class Main {
                         subOpcao = scanner.nextInt();
                         switch (subOpcao) {
                             case 1:
-                                controller.cadastrar();
+                                clienteController.cadastrar();
                                 break;
                             case 2:
-                                controller.update();
+                                clienteController.update();
                                 break;
                             case 3:
-                                controller.deletar();
+                                clienteController.deletar();
                                 break;
                             case 4:
-                                controller.getList();
+                                clienteController.getList();
                                 break;
                             case 5:
-                                controller.search();
+                                clienteController.search();
                                 break;
                             case 0:
                                 System.out.println("Voltando...");
@@ -77,6 +85,37 @@ public class Main {
                         }
                     } while (subOpcao != 0);
                     break;
+
+                case 3:
+                    do{
+                        System.out.println(subMenuMateriais);
+                        System.out.println("Informe um número: ");
+                        subOpcao = scanner.nextInt();
+                        switch (subOpcao) {
+                            case 1:
+                                materialController.cadastrar();
+                                break;
+                            case 2:
+                                materialController.update();
+                                break;
+                            case 3:
+                                materialController.deletar();
+                                break;
+                            case 4:
+                                materialController.getList();
+                                break;
+                            case 5:
+                                materialController.search();
+                                break;
+                            case 0:
+                                System.out.println("Voltando...");
+                                break;
+                            default:
+                                System.err.println("Opção inválida!");
+                        }
+                    } while (subOpcao != 0);
+                    break;
+
                 default:
                     System.out.println("Opção inválida!");
                 case 0:

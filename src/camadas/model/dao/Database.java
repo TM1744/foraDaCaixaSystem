@@ -27,7 +27,7 @@ public final class Database {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             descricao TEXT NOT NULL,
             valor REAL NOT NULL CHECK (valor > 0),
-            quantidadeEstoque integer not null check,
+            quantidadeEstoque INTEGER NOT NULL CHECK (quantidadeEstoque >= 0),        
             cod INTEGER NOT NULL UNIQUE
             );
             """);
@@ -46,7 +46,7 @@ public final class Database {
             CREATE TABLE IF NOT EXISTS Produtos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             descricao TEXT NOT NULL,
-            valor REAL NOT NULL CHECK(valor > 0)
+            valor REAL NOT NULL CHECK(valor > 0),
             cod INTEGER NOT NULL UNIQUE
             );
             """);
@@ -67,7 +67,7 @@ public final class Database {
             idCliente INTEGER NOT NULL,
             valorTotal REAL NOT NULL CHECK (valorTotal > 0),
             dataEntrega DATE,
-            cod INTEGER NOT NULL UNIQUE
+            cod INTEGER NOT NULL UNIQUE,
             FOREIGN KEY (idCliente) REFERENCES Clientes(id)
             );
             """);

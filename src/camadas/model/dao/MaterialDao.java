@@ -75,7 +75,7 @@ public class MaterialDao {
     public void update (String codAntigo, Material materialAtualizado){
         try{
             Database db = new Database();
-            PreparedStatement stm = db.connection.prepareStatement("update materiais set descricao = ?, set valor = ?, set cod = ? where cod = ?");
+            PreparedStatement stm = db.connection.prepareStatement("update materiais set descricao = ?, valor = ?, cod = ? where cod = ?");
             stm.setString(1, materialAtualizado.getDescricao());
             stm.setFloat(2, materialAtualizado.getValor());
             stm.setString(3, materialAtualizado.getCod());

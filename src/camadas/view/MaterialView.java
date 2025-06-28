@@ -9,21 +9,25 @@ public class MaterialView {
     Scanner scanner = new Scanner(System.in);
 
     public String readDescricao() {
+        scanner = new Scanner(System.in);
         System.out.println("Informe a descrição do material:");
         return scanner.nextLine();
     }
 
     public Float readValor() {
+        scanner = new Scanner(System.in);
         System.out.println("Informe o custo do material:");
         return scanner.nextFloat();
     }
 
     public Integer readQuantidadeEstoque() {
+        scanner = new Scanner(System.in);
         System.out.println("Informe a quantida em estoque do material:");
         return scanner.nextInt();
     }
 
     public String readCod() {
+        scanner = new Scanner(System.in);
         System.out.println("Informe a COD do material:");
         return scanner.nextLine();
     }
@@ -90,5 +94,9 @@ public class MaterialView {
         System.out.println("Custo: " + material.getValor());
         System.out.println("COD: " + material.getCod());
         System.out.println("Quantidade em estoque: " + material.getQuantidadeEstoque());
+    }
+
+    public void notFound(){
+        System.err.println("Material(is) não encontrado(s)");
     }
 }
