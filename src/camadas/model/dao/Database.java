@@ -4,7 +4,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public final class Database {
+public final class Database{
     public Connection connection;
     private final String dns = "jdbc:sqlite:bancoDeDados/banco/base.db";
 
@@ -36,9 +36,11 @@ public final class Database {
             CREATE TABLE IF NOT EXISTS ItemMaterial (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             idMaterial INTEGER NOT NULL,
+            idProduto Integer not null,
             quantidade INTEGER CHECK(quantidade > 0),
             cod integer not null unique,
-            FOREIGN KEY (idMaterial) REFERENCES Materiais(id)
+            FOREIGN KEY (idMaterial) REFERENCES Materiais(id),
+            foreign key (idProduto) references Produtos(id)
             );
             """);
 
@@ -48,16 +50,6 @@ public final class Database {
             descricao TEXT NOT NULL,
             valor REAL NOT NULL CHECK(valor > 0),
             cod INTEGER NOT NULL UNIQUE
-            );
-            """);
-
-            stm.executeUpdate("""
-            CREATE TABLE IF NOT EXISTS Produto_ItemMaterial (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            idProduto INTEGER NOT NULL,
-            idItemMaterial INTEGER NOT NULL,
-            FOREIGN KEY (idProduto) REFERENCES Produtos(id),
-            FOREIGN KEY (idItemMaterial) REFERENCES ItemMaterial(id)
             );
             """);
 
@@ -76,17 +68,11 @@ public final class Database {
             CREATE TABLE IF NOT EXISTS ItemProduto (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             idProduto INTEGER NOT NULL,
+            idVenda integer not null,
+            cod integer not null unique,
             quantidade INTEGER NOT NULL CHECK(quantidade > 0),
-            FOREIGN KEY (idProduto) REFERENCES Produtos(id)
-            );
-            """);
-            stm.executeUpdate("""
-            CREATE TABLE IF NOT EXISTS Venda_ItemProduto (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            idVenda INTEGER NOT NULL,
-            idItemProduto INTEGER NOT NULL,
-            FOREIGN KEY (idVenda) REFERENCES Vendas(id),
-            FOREIGN KEY (idItemProduto) REFERENCES ItemProduto(id)
+            FOREIGN KEY (idProduto) REFERENCES Produtos(id),
+            foreign key (idVenda) references Vendas (id)
             );
             """);
         } catch (SQLException ex) {
