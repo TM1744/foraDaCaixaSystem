@@ -23,6 +23,14 @@ public class Produto {
         this.margemLucro = margemLucro;
     }
 
+    public Produto(String cod){
+        this.cod = cod;
+    }
+
+    public Produto(){
+
+    }
+
     public String getDescricao() {
         return descricao;
     }

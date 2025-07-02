@@ -27,7 +27,7 @@ public final class Database{
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             descricao TEXT NOT NULL,
             valor REAL NOT NULL CHECK (valor > 0),
-            quantidadeEstoque INTEGER NOT NULL CHECK (quantidadeEstoque >= 0),        
+            quantidadeEstoque INTEGER NOT NULL CHECK (quantidadeEstoque >= 0),
             cod INTEGER NOT NULL UNIQUE
             );
             """);
@@ -49,6 +49,7 @@ public final class Database{
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             descricao TEXT NOT NULL,
             valor REAL NOT NULL CHECK(valor > 0),
+            margemLucro real not null default 0,
             cod INTEGER NOT NULL UNIQUE
             );
             """);
