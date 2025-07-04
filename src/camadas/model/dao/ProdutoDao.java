@@ -11,60 +11,78 @@ import java.util.List;
 import java.util.Set;
 
 public class ProdutoDao {
-    public void create(Produto produto) {
+    public Float getMargemLucro(){
+        String getValorMargem = "select porcentagem from MargemDeLucro where id = 1";
+        float valor = 0f;
+        try{
+            Database db = new Database();
+            try(ResultSet result = db.connection.createStatement().executeQuery(getValorMargem)){
+                valor = result.getFloat("porcentagem");
+            }
+        }catch (SQLException e){
+            throw new RuntimeException("Erro ao obter margem de lucro para o produto", e);
+        }
+        return valor;
+    }
+
+    public void create(Produto produto){
+        String insertProduto = "insert into produtos (descricao, valor, cod, margemLucro) values (?, ?, ?, ?);";
+        String insertItemMaterial = "insert into ItemMaterial (idMaterial, idProduto, quantidade) values (?, ?, ?)";
+        String getIdMaterial = "select id from materiais where cod = ?";
+
         try {
             Database db = new Database();
             db.connection.setAutoCommit(false);
+            try {
+                int idProduto;
+                try (PreparedStatement insertP = db.connection.prepareStatement(insertProduto, Statement.RETURN_GENERATED_KEYS)) {
+                    insertP.setString(1, produto.getDescricao());
+                    insertP.setFloat(2, produto.getValor());
+                    insertP.setString(3, produto.getCod());
+                    insertP.setFloat(4, produto.getMargemLucro());
+                    insertP.executeUpdate();
 
-            String insertProduto = "insert into produtos (descricao, valor, cod) values (?, ?, ?);";
-            String insertItemMaterial = "insert into itemMaterial (idMaterial, idProduto, quantidade, cod) values (?, ?, ?, ?)";
-            String getIdMaterial = "select id from materiais where cod = ?";
-            int idMaterial = 0;
-            int idProduto = 0;
-
-            try (PreparedStatement stm = db.connection.prepareStatement(insertProduto, Statement.RETURN_GENERATED_KEYS)) {
-                stm.setString(1, produto.getDescricao());
-                stm.setFloat(2, produto.getValor());
-                stm.setString(3, produto.getCod());
-                stm.executeUpdate();
-
-                try (ResultSet result = stm.getGeneratedKeys()) {
-                    if (result.next()) {
-                        idProduto = result.getInt(1);
-                    } else {
-                        throw new SQLException("Falha ao procurar id de produto");
-                    }
-                }
-            }
-
-            try (PreparedStatement stm = db.connection.prepareStatement(getIdMaterial)) {
-                for (ItemMaterial item : produto.getItensMateriais()) {
-                    stm.setString(1, item.getMaterial().getCod());
-                    try (ResultSet result = stm.executeQuery()) {
-                        if (result.next()) {
-                            idMaterial = result.getInt("id");
+                    try (ResultSet resultKey = insertP.getGeneratedKeys()) {
+                        if (resultKey.next()) {
+                            idProduto = resultKey.getInt(1);
                         } else {
-                            throw new SQLException("Falha ao procurar id de material-cod: " + item.getMaterial().getCod());
+                            throw new SQLException("Nenhuma chave gerada para o produto");
                         }
                     }
-                    try (PreparedStatement stm2 = db.connection.prepareStatement(insertItemMaterial)) {
-                        stm2.setInt(1, idMaterial);
-                        stm2.setInt(2, idProduto);
-                        stm2.setInt(3, item.getQuantidade());
-                        stm2.setString(4, item.getCod());
-                        stm2.executeUpdate();
+                }
+
+                for (ItemMaterial item : produto.getItensMateriais()) {
+                    int idMaterial;
+                    try (PreparedStatement getM = db.connection.prepareStatement(getIdMaterial)) {
+                        getM.setString(1, item.getMaterial().getCod());
+                        try (ResultSet resultM = getM.executeQuery()) {
+                            if (resultM.next()) {
+                                idMaterial = resultM.getInt(1);
+                            } else {
+                                throw new SQLException("Material com código " + item.getMaterial().getCod() + " não encontrado");
+                            }
+                        }
+                    }
+
+                    try (PreparedStatement insertIM = db.connection.prepareStatement(insertItemMaterial)) {
+                        insertIM.setInt(1, idMaterial);
+                        insertIM.setInt(2, idProduto);
+                        insertIM.setInt(3, item.getQuantidade());
+                        insertIM.executeUpdate();
                     }
                 }
-            }
-            try {
+
                 db.connection.commit();
             } catch (SQLException e) {
-                db.connection.rollback();
-                throw new RuntimeException("Erro ao criar produto - " + e);
+                try {
+                    db.connection.rollback();
+                } catch (SQLException rollback) {
+                    e.addSuppressed(rollback);
+                }
+                throw e;
             }
-            db.connection.close();
-        } catch (SQLException rollbackEx) {
-            throw new RuntimeException("Erro ao restaurar banco de dados com rollback- ", rollbackEx);
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao registrar produto", e);
         }
     }
 
@@ -125,7 +143,7 @@ public class ProdutoDao {
                 String getIdProduto = "select id from produtos where cod = ?";
                 int idProduto = 0;
                 String deleteItemMaterial = "delete from ItemMaterial where idProduto = ?";
-                String insertItemMaterial = "insert into ItemMaterial (idMaterial, idProduto, quantidade, cod) values (?, ?, ?, ?)";
+                String insertItemMaterial = "insert into ItemMaterial (idMaterial, idProduto, quantidade) values (?, ?, ?)";
                 String getIdMaterial = "select id from materiais where cod = ?";
 
 
@@ -160,7 +178,6 @@ public class ProdutoDao {
                                         throw new SQLException("Erro ao procurar id de material");
                                     }
                                     insert.setInt(3, item.getQuantidade());
-                                    insert.setString(4, item.getCod());
                                     insert.executeUpdate();
                                 } catch (SQLException e) {
                                     throw e;
@@ -238,8 +255,7 @@ public class ProdutoDao {
                                                     resultM.getString("cod"),
                                                     resultM.getInt("quantidadeEstoque")
                                             ),
-                                            resultIM.getInt("quantidade"),
-                                            resultIM.getString("cod")
+                                            resultIM.getInt("quantidade")
                                     ));
                                 }
                             }
@@ -284,8 +300,7 @@ public class ProdutoDao {
                     quantidadeEstoque,
                     materiais.cod as codMateriais,
                     idProduto,
-                    quantidade,
-                    ItemMaterial.cod as codItemMaterial
+                    quantidade
                 from itemMaterial join materiais on itemMaterial.idmaterial = materiais.id
                 where idProduto = ?;
                 """;
@@ -307,8 +322,7 @@ public class ProdutoDao {
                                                     resultIM.getString("codMateriais"),
                                                     resultIM.getInt("quantidadeEstoque")
                                             ),
-                                            resultIM.getInt("quantidade"),
-                                            resultIM.getString("codItemMaterial")
+                                            resultIM.getInt("quantidade")
                                     ));
                                 }
                                 produtos.add(new Produto(
@@ -339,77 +353,68 @@ public class ProdutoDao {
     }
 
     public List<Produto> getSearch(String descricao){
-        String getProdutoByDescricao = "select * from produto where descricao like ?";
-        int idProduto = 0;
+        String getProdutoByDescricao = "select * from produtos where descricao like ?";
         String getItensMateriais = """
-                select
-                    itemMaterial.id as idItemMaterial,
-                    idMaterial,
-                    descricao,
-                    valor,
-                    quantidadeEstoque,
-                    materiais.cod as codMateriais,
-                    idProduto,
-                    quantidade,
-                    ItemMaterial.cod as codItemMaterial
-                from itemMaterial join materiais on itemMaterial.idmaterial = materiais.id
-                where idProduto = ?;
-                """;
+        select
+            itemMaterial.id as idItemMaterial,
+            idMaterial,
+            descricao,
+            valor,
+            quantidadeEstoque,
+            materiais.cod as codMateriais,
+            idProduto,
+            quantidade
+        from itemMaterial
+        join materiais on itemMaterial.idmaterial = materiais.id
+        where idProduto = ?;
+    """;
+
         List<Produto> produtos = new ArrayList<>();
+
         try{
             Database db = new Database();
-            db.connection.setAutoCommit(false);
-            try{
-                try(PreparedStatement getP = db.connection.prepareStatement(getProdutoByDescricao)){
-                    getP.setString(1, "%" + descricao + "%");
-                    try(ResultSet resultP = getP.executeQuery()){
-                        while(resultP.next()){
-                            idProduto = resultP.getInt("id");
-                            try(PreparedStatement getIM = db.connection.prepareStatement(getItensMateriais)){
-                                getIM.setInt(1, idProduto);
-                                Set<ItemMaterial> itemMaterialSet = new HashSet<>();
-                                try(ResultSet resultIM = getIM.executeQuery()){
-                                    while (resultIM.next()){
-                                        itemMaterialSet.add(
-                                                new ItemMaterial(
-                                                        new Material(
-                                                                resultIM.getString("descricao"),
-                                                                resultIM.getFloat("valor"),
-                                                                resultIM.getString("codMateriais"),
-                                                                resultIM.getInt("quantidadeEstoque")
-                                                        ),
-                                                        resultIM.getInt("quantidade"),
-                                                        resultIM.getString("codItemMaterial")
-                                                )
-                                        );
-                                    }
-                                    produtos.add(
-                                            new Produto(
-                                                    resultP.getString("descricao"),
-                                                    resultP.getFloat("valor"),
-                                                    itemMaterialSet,
-                                                    resultP.getString("cod"),
-                                                    resultP.getFloat("margemLucro")
-                                            )
+            try (PreparedStatement getP = db.connection.prepareStatement(getProdutoByDescricao)) {
+                getP.setString(1, "%" + descricao + "%");
+
+                try (ResultSet resultP = getP.executeQuery()) {
+                    while (resultP.next()) {
+                        int idProduto = resultP.getInt("id");
+
+                        Set<ItemMaterial> itemMaterialSet = new HashSet<>();
+                        try (PreparedStatement getIM = db.connection.prepareStatement(getItensMateriais)) {
+                            getIM.setInt(1, idProduto);
+
+                            try (ResultSet resultIM = getIM.executeQuery()) {
+                                while (resultIM.next()) {
+                                    Material material = new Material(
+                                            resultIM.getString("descricao"),
+                                            resultIM.getFloat("valor"),
+                                            resultIM.getString("codMateriais"),
+                                            resultIM.getInt("quantidadeEstoque")
                                     );
+                                    int quantidade = resultIM.getInt("quantidade");
+
+                                    itemMaterialSet.add(new ItemMaterial(material, quantidade));
                                 }
                             }
                         }
+
+                        Produto produto = new Produto(
+                                resultP.getString("descricao"),
+                                resultP.getFloat("valor"),
+                                itemMaterialSet,
+                                resultP.getString("cod"),
+                                resultP.getFloat("margemLucro")
+                        );
+
+                        produtos.add(produto);
                     }
                 }
-                db.connection.commit();
-            }catch (SQLException e){
-                try{
-                    db.connection.rollback();
-                }catch (SQLException rollback){
-                    throw new SQLException("Erro ao dar rollback", rollback);
-                }
-            }finally {
-                db.connection.close();
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao procurar produto por descrição", e);
         }
+
         return produtos;
     }
 }

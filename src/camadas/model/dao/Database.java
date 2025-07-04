@@ -38,7 +38,6 @@ public final class Database{
             idMaterial INTEGER NOT NULL,
             idProduto Integer not null,
             quantidade INTEGER CHECK(quantidade > 0),
-            cod integer not null unique,
             FOREIGN KEY (idMaterial) REFERENCES Materiais(id),
             foreign key (idProduto) references Produtos(id)
             );
@@ -76,6 +75,13 @@ public final class Database{
             foreign key (idVenda) references Vendas (id)
             );
             """);
+
+            stm.executeUpdate("""
+                    create table if not exists MargemDeLucro (
+                    id integer primary key autoincrement,
+                    porcentagem real not null default 30
+                    );
+                    """);
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }

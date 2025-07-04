@@ -2,6 +2,7 @@ package camadas;
 
 import camadas.controller.ClienteController;
 import camadas.controller.MaterialController;
+import camadas.controller.ProdutoController;
 import camadas.model.domain.Material;
 
 import java.util.Scanner;
@@ -15,6 +16,7 @@ public class Main {
     public static void function1() {
         ClienteController clienteController = new ClienteController();
         MaterialController materialController = new MaterialController();
+        ProdutoController produtoController = new ProdutoController();
 
         Scanner scanner = new Scanner(System.in);
         String menuPrincipal = """
@@ -25,7 +27,7 @@ public class Main {
                 - 4) Clientes
                 - 5) Operações
                 - 0) Sair...
-                ----------------------------\n
+                ----------------------------
                 """;
         String subMenuClientes = """
                 ----------Clientes----------
@@ -35,7 +37,7 @@ public class Main {
                 - 4) Ver todos
                 - 5) Procurar
                 - 0) Voltar...
-                ---------------------------\n
+                ---------------------------
                 """;
         String subMenuMateriais = """
                 ----------Materiais---------
@@ -46,7 +48,17 @@ public class Main {
                 - 5) Procurar
                 - 6) Definir quantidade em estoque
                 - 0) Voltar...
-                ---------------------------\n
+                ---------------------------
+                """;
+        String subMenuProdutos = """
+                ----------Produtos----------
+                - 1) Cadastrar
+                - 2) Atualizar
+                - 3) Deletar
+                - 4) Ver todos
+                - 5) Procurar
+                - 0) Voltar...
+                ---------------------------
                 """;
         Integer opcao = 0;
         Integer subOpcao = 0;
@@ -106,6 +118,36 @@ public class Main {
                                 break;
                             case 5:
                                 materialController.search();
+                                break;
+                            case 0:
+                                System.out.println("Voltando...");
+                                break;
+                            default:
+                                System.err.println("Opção inválida!");
+                        }
+                    } while (subOpcao != 0);
+                    break;
+
+                case 2:
+                    do{
+                        System.out.println(subMenuProdutos);
+                        System.out.println("Informe um número: ");
+                        subOpcao = scanner.nextInt();
+                        switch (subOpcao) {
+                            case 1:
+                                produtoController.cadastrar();
+                                break;
+                            case 2:
+                                produtoController.update();
+                                break;
+                            case 3:
+                                produtoController.delete();
+                                break;
+                            case 4:
+                                produtoController.getList();
+                                break;
+                            case 5:
+                                produtoController.searchProduto();
                                 break;
                             case 0:
                                 System.out.println("Voltando...");

@@ -9,12 +9,13 @@ public class ClienteView {
     private Scanner scanner = new Scanner(System.in);
 
     public void printCliente(Cliente cliente){
-        System.out.println("\n---Cliente:");
+        System.out.println();
+        System.out.println("CLIENTE--------------------");
         printNome(cliente);
         printTelefone(cliente);
         printEndereco(cliente);
         printCod(cliente);
-        System.out.println("------------------------------------------------------------------");
+        System.out.println();
     }
 
     public void printClienteList(List<Cliente> clientes){

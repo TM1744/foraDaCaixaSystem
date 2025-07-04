@@ -23,6 +23,26 @@ public class Produto {
         this.margemLucro = margemLucro;
     }
 
+    public Produto(Set<ItemMaterial> materialSet){
+        this.itensMateriais = materialSet;
+    }
+
+    public Produto(Produto produto){
+        this.descricao = produto.getDescricao();
+        this.valor = produto.getValor();
+        this.itensMateriais = produto.getItensMateriais();
+        this.cod = produto.getCod();
+        this.margemLucro = produto.getMargemLucro();
+    }
+
+    public Produto (String descricao, Float valor, Set<ItemMaterial> materiais, Float margemLucro) throws IllegalArgumentException{
+        setMargemLucro(margemLucro);
+        setDescricao(descricao);
+        setValor(valor);
+        setItensMateriais(materiais);
+        setCod(descricao + valor, 6);
+    }
+
     public Produto(String cod){
         this.cod = cod;
     }
@@ -46,12 +66,9 @@ public class Produto {
         return valor;
     }
 
-    public void setValor(Float valor) {
+    public void setValor(Float valor) throws IllegalArgumentException{
         if (valor < 0){
             throw new IllegalArgumentException("Valor de produto não pode ser negativo");
-        } else if (valor == 0){
-            Float valorMinimo = this.getValorMinimo();
-            this.valor = valorMinimo + (valorMinimo * (getMargemLucro() / 100));
         } else {
             this.valor = valor;
         }
@@ -63,18 +80,6 @@ public class Produto {
 
     public void setItensMateriais(Set<ItemMaterial> materiais) throws IllegalArgumentException {
         this.itensMateriais = materiais;
-    }
-
-    public void addMateriais(ItemMaterial materiais) throws IllegalArgumentException{
-        for(ItemMaterial material : this.itensMateriais){
-            if(material.getMaterial().getDescricao().equals(materiais.getMaterial().getDescricao())) {
-                throw new IllegalArgumentException("Material já utilizado");
-            }
-        }
-        if (!this.itensMateriais.add(materiais)) {
-            throw new IllegalArgumentException("Materiais repetidos");
-        }
-        this.itensMateriais.add(materiais);
     }
 
     public String getCod() {
@@ -106,7 +111,7 @@ public class Produto {
         return margemLucro;
     }
 
-    public void setMargemLucro(Float margemLucro) {
+    public void setMargemLucro(Float margemLucro) throws IllegalArgumentException{
         if (margemLucro < 0){
             throw new IllegalArgumentException("Margem de lucro não pode ter um valor negativo");
         }

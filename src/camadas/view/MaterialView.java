@@ -89,7 +89,7 @@ public class MaterialView {
     }
 
     private void printMaterial(Material material){
-        System.out.println("MATERIAL");
+        System.out.println("MATERIAL--------------------");
         System.out.println("Descrição: " + material.getDescricao());
         System.out.println("Custo: " + material.getValor());
         System.out.println("COD: " + material.getCod());
