@@ -119,6 +119,8 @@ public class Main {
                             case 5:
                                 materialController.search();
                                 break;
+                            case 6:
+                                materialController.updateQuantidadeEstoque();
                             case 0:
                                 System.out.println("Voltando...");
                                 break;

@@ -68,4 +68,14 @@ public class MaterialController {
         }
     }
 
+    public void updateQuantidadeEstoque(){
+        try{
+            search();
+            dao.updateQuantidadeEstoque(view.readCod(), view.readQuantidadeEstoque());
+            System.out.println("Sucesso ao atualizar quantidade em estoque!");
+        } catch (RuntimeException e){
+            view.falhaUpdate(e);
+        }
+    }
+
 }

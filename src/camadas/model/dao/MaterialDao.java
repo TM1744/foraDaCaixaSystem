@@ -1,5 +1,6 @@
 package camadas.model.dao;
 
+import camadas.controller.ProdutoController;
 import camadas.model.domain.Material;
 
 import javax.xml.crypto.Data;
@@ -105,6 +106,33 @@ public class MaterialDao {
             return materiais;
         }catch (SQLException e){
             throw new RuntimeException(e);
+        }
+    }
+
+    public void updateQuantidadeEstoque(String cod, Integer valor){
+        String updateQuantidadeEstoque = "update materiais set quantidadeEstoque = ? where cod = ?";
+        try {
+            Database db = new Database();
+            db.connection.setAutoCommit(false);
+            try{
+                try(PreparedStatement stm = db.connection.prepareStatement(updateQuantidadeEstoque)){
+                    stm.setFloat(1, valor);
+                    stm.setString(2, cod);
+                    stm.executeUpdate();
+                }
+                db.connection.commit();
+            }catch (SQLException e){
+                try {
+                    db.connection.rollback();
+                    throw new SQLException("Erro de código (rollback realizado) - " + e);
+                }catch (SQLException rollback){
+                    throw new SQLException("Erro ao realizar rollback - " + rollback);
+                }
+            }finally {
+                db.connection.close();
+            }
+        }catch (SQLException e){
+            throw new RuntimeException("Erro ao atualizar valor de estoque - " + e);
         }
     }
 }
