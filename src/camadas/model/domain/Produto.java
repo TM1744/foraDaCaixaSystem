@@ -11,11 +11,11 @@ import java.util.Set;
 public class Produto {
     private String descricao;
     private Float valor;
-    private Set<ItemMaterial> itensMateriais = new HashSet<>();
+    private List<ItemMaterial> itensMateriais = new ArrayList<>();
     private String cod;
     private Float margemLucro;
 
-    public Produto(String descricao, Float valor, Set<ItemMaterial> materiais, String cod, Float margemLucro) {
+    public Produto(String descricao, Float valor, List<ItemMaterial> materiais, String cod, Float margemLucro) {
         this.descricao = descricao;
         this.valor = valor;
         this.itensMateriais = materiais;
@@ -23,7 +23,7 @@ public class Produto {
         this.margemLucro = margemLucro;
     }
 
-    public Produto(Set<ItemMaterial> materialSet){
+    public Produto(List<ItemMaterial> materialSet){
         this.itensMateriais = materialSet;
     }
 
@@ -35,7 +35,7 @@ public class Produto {
         this.margemLucro = produto.getMargemLucro();
     }
 
-    public Produto (String descricao, Float valor, Set<ItemMaterial> materiais, Float margemLucro) throws IllegalArgumentException{
+    public Produto (String descricao, Float valor, List<ItemMaterial> materiais, Float margemLucro) throws IllegalArgumentException{
         setMargemLucro(margemLucro);
         setDescricao(descricao);
         setValor(valor);
@@ -74,12 +74,26 @@ public class Produto {
         }
     }
 
-    public Set<ItemMaterial> getItensMateriais() {
+    public List<ItemMaterial> getItensMateriais() {
         return itensMateriais;
     }
 
-    public void setItensMateriais(Set<ItemMaterial> materiais) throws IllegalArgumentException {
-        this.itensMateriais = materiais;
+    public void setItensMateriais(List<ItemMaterial> materiais) throws IllegalArgumentException {
+        List<ItemMaterial> materiaisVerificados = new ArrayList<>();
+
+        for(int i = 0; i < materiais.size(); i ++){
+            String cod = materiais.get(i).getMaterial().getCod();
+            int quantidadeTotal = 0;
+            for(int j = i + 1; j < materiais.size(); j ++){
+                if(materiais.get(j).getMaterial().getCod().equals(cod)){
+                    quantidadeTotal += materiais.get(j).getQuantidade();
+                    materiais.remove(j);
+                }
+            }
+            materiaisVerificados.add(new ItemMaterial(materiais.get(i).getMaterial(), materiais.get(i).getQuantidade() + quantidadeTotal));
+        }
+
+        this.itensMateriais = materiaisVerificados;
     }
 
     public String getCod() {

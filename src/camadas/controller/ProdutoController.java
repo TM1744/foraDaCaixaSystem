@@ -19,8 +19,8 @@ public class ProdutoController {
     MaterialDao materialDao = new MaterialDao();
     MaterialView materialView = new MaterialView();
 
-    private Set<ItemMaterial> cadastrarItemMaterial(){
-        Set<ItemMaterial> materials = new HashSet<>();
+    private List<ItemMaterial> cadastrarItemMaterial(){
+        List<ItemMaterial> materials = new ArrayList<>();
         try{
             do{
                 searchMaterial();
@@ -35,7 +35,7 @@ public class ProdutoController {
 
     public void cadastrar (){
         try{
-            Set<ItemMaterial> materialSet = cadastrarItemMaterial();
+            List<ItemMaterial> materialSet = cadastrarItemMaterial();
             float valorMinimo = 0f;
             for(ItemMaterial item : materialSet){
                 valorMinimo += item.getMaterial().getValor() * item.getQuantidade();

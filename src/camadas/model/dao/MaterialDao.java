@@ -28,13 +28,19 @@ public class MaterialDao {
     }
 
     public void delete (String cod){
+        String deleteMaterial = "delete from materiais where cod = ?";
         try{
             Database db = new Database();
-            PreparedStatement stm = db.connection.prepareStatement("delete from materiais where cod = ?;");
-            stm.setString(1, cod);
-            stm.executeUpdate();
-            stm.close();
-            db.connection.close();
+            db.connection.setAutoCommit(false);
+            try{
+                try(PreparedStatement delete = db.connection.prepareStatement(deleteMaterial)){
+                    delete.setString(1, cod);
+                    delete.executeUpdate();
+                }
+                db.connection.commit();
+            }finally {
+                db.connection.close();
+            }
         }catch (SQLException e){
             throw new RuntimeException(e);
         }

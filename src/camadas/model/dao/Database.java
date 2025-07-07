@@ -13,6 +13,10 @@ public final class Database{
             this.connection = DriverManager.getConnection(dns);
             Statement stm = connection.createStatement();
             stm.executeUpdate("""
+                    PRAGMA foreign_keys = ON
+                    """);
+
+            stm.executeUpdate("""
             CREATE TABLE IF NOT EXISTS Clientes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,

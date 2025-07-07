@@ -218,7 +218,7 @@ public class ProdutoDao {
 
     public Produto get(String cod) {
         Produto produto = new Produto(cod);
-        Set<ItemMaterial> itensMateriais = new HashSet<>();
+        List<ItemMaterial> itensMateriais = new ArrayList<>();
         try {
             Database db = new Database();
             db.connection.setAutoCommit(false);
@@ -313,7 +313,7 @@ public class ProdutoDao {
                         try(PreparedStatement getIM = db.connection.prepareStatement(getAllItemMateriais)){
                             getIM.setInt(1, resultP.getInt("id"));
                             try(ResultSet resultIM = getIM.executeQuery()){
-                                Set<ItemMaterial> itemMaterialSet = new HashSet<>();
+                                List<ItemMaterial> itemMaterialSet = new ArrayList<>();
                                 while (resultIM.next()){
                                     itemMaterialSet.add(new ItemMaterial(
                                             new Material(
@@ -380,7 +380,7 @@ public class ProdutoDao {
                     while (resultP.next()) {
                         int idProduto = resultP.getInt("id");
 
-                        Set<ItemMaterial> itemMaterialSet = new HashSet<>();
+                        List<ItemMaterial> itemMaterialSet = new ArrayList<>();
                         try (PreparedStatement getIM = db.connection.prepareStatement(getItensMateriais)) {
                             getIM.setInt(1, idProduto);
 
