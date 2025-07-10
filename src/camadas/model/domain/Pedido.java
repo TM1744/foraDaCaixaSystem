@@ -13,22 +13,22 @@ public class Pedido {
     private Cliente cliente;
     private List<ItemProduto> produtos = new ArrayList<>();
     private Float valorTotal;
-    private String dataDeRegistro;
+    private LocalDateTime dataDeRegistro;
     private LocalDate dataEntrega;
     private Boolean isFinalizado;
     private String cod;
 
     public Pedido(String dataEntrega, List<ItemProduto> produtos, Cliente cliente) {
-        setDataDeRegistro();
+        gerarDataDeRegistro();
         setDataEntrega(dataEntrega);
         setProdutos(produtos);
         setCliente(cliente);
-        setValorTotal();
+        gerarValorTotal();
         setFinalizado(false);
         setCod(cliente.getNome() + produtos.getFirst().getProduto().getDescricao() + dataEntrega, 6);
     }
 
-    public Pedido(Cliente cliente, List<ItemProduto> produtos, Float valorTotal, String dataDeRegistro, LocalDate dataEntrega, Boolean isFinalizado, String cod){
+    public Pedido(Cliente cliente, List<ItemProduto> produtos, Float valorTotal, LocalDateTime dataDeRegistro, LocalDate dataEntrega, Boolean isFinalizado, String cod){
         this.cliente = cliente;
         this.produtos = produtos;
         this.valorTotal = valorTotal;
@@ -46,6 +46,10 @@ public class Pedido {
         this.dataEntrega = pedido.getDataEntrega();
         this.isFinalizado = pedido.getFinalizado();
         this.cod = pedido.getCod();
+    }
+
+    public Pedido(String cod){
+        this.cod = cod;
     }
 
     public Cliente getCliente() {
@@ -80,10 +84,14 @@ public class Pedido {
         return valorTotal;
     }
 
-    public void setValorTotal() {
+    public void gerarValorTotal() {
         for(ItemProduto item : this.produtos){
             this.valorTotal += (item.getProduto().getValor() * item.getQuantidade());
         }
+    }
+
+    public void setValorTotal(Float valorTotal){
+        this.valorTotal = valorTotal;
     }
 
     public LocalDate getDataEntrega() {
@@ -98,12 +106,20 @@ public class Pedido {
         }
     }
 
-    public String getDataDeRegistro() {
+    public LocalDateTime getDataDeRegistro() {
         return dataDeRegistro;
     }
 
-    public void setDataDeRegistro() {
-        this.dataDeRegistro = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+    public void gerarDataDeRegistro() {
+        this.dataDeRegistro = LocalDateTime.now();
+    }
+
+    public void setDataDeRegistro(String dataRegistro){
+        try{
+            this.dataDeRegistro = LocalDateTime.parse(dataRegistro, DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+        } catch (IllegalArgumentException e){
+            throw new IllegalArgumentException("Valor de data de entrega informado está incorreto!");
+        }
     }
 
     public Boolean getFinalizado() {

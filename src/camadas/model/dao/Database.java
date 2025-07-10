@@ -58,12 +58,14 @@ public final class Database{
             """);
 
             stm.executeUpdate("""
-            CREATE TABLE IF NOT EXISTS Vendas (
+            CREATE TABLE IF NOT EXISTS Pedidos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             idCliente INTEGER NOT NULL,
-            valorTotal REAL NOT NULL CHECK (valorTotal > 0),
-            dataEntrega DATE,
+            valorTotal REAL NOT NULL CHECK (valorTotal >= 0),
+            dataRegistro text not null,
+            dataEntrega text not null,
             cod INTEGER NOT NULL UNIQUE,
+            isFinalizado integer not null default 0,
             FOREIGN KEY (idCliente) REFERENCES Clientes(id)
             );
             """);
@@ -72,8 +74,7 @@ public final class Database{
             CREATE TABLE IF NOT EXISTS ItemProduto (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             idProduto INTEGER NOT NULL,
-            idVenda integer not null,
-            cod integer not null unique,
+            idPedido integer not null,
             quantidade INTEGER NOT NULL CHECK(quantidade > 0),
             FOREIGN KEY (idProduto) REFERENCES Produtos(id),
             foreign key (idVenda) references Vendas (id)
