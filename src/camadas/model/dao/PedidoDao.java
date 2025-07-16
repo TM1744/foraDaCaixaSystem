@@ -6,13 +6,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class PedidoDao {
 
-    public void create(Pedido pedido, Boolean isVenda){
+    public void create(Pedido pedido){
         String insertPedido = """
                 insert into pedidos (idcliente, valorTotal, dataRegistro, dataEntrega, cod, isFinalizado)
                 values (?,?,?,?,?,?);
@@ -42,7 +44,7 @@ public class PedidoDao {
                     insertP.setString(3, pedido.getDataDeRegistro().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
                     insertP.setString(4, pedido.getDataEntrega().format(DateTimeFormatter.ISO_LOCAL_DATE));
                     insertP.setString(5, pedido.getCod());
-                    if(isVenda){
+                    if(pedido.getFinalizado()){
                         insertP.setInt(6, 1);
                     }else {
                         insertP.setInt(6, 0);
@@ -94,52 +96,63 @@ public class PedidoDao {
                     db.connection.rollback();
                 }catch (SQLException rollbackEx){
                     throw new SQLException("Erro ao realizar rollback", e);
+                }finally {
+                    throw e;
                 }
             }finally {
                 db.connection.close();
             }
         }catch (SQLException e){
-            throw new RuntimeException("Erro ao cadastra pedido", e);
+            throw new RuntimeException("Erro ao cadastra pedido " + e);
         }
     }
 
-    public void delete (String cod){
-        String deletePedidoByCod = "delete from pedidos where id = ?";
-        String deleteItemProdutosByIdProduto = "delete from ItemProduto where idProduto = ?";
-        String getIdProduto = "select id from produtos where cod = ?";
-        int idProduto = 0;
-        String getIsFinalizado = "select isFinalizado from pedidos where cod = ?";
-        String getQuantidadeMaterialEstoque = "select quantidadeEstoque from materiais where cod = ?";
-        String updateMaterialEstoque = "update materiais set quantidadeEstoque = ? where cod = ?";
+    public void delete(String codPedido) {
+        String getPedidoId = "SELECT id, isFinalizado FROM Pedidos WHERE cod = ?";
+        String getQuantidadeEstoque = "SELECT quantidadeEstoque FROM Materiais WHERE cod = ?";
+        String updateEstoque = "UPDATE Materiais SET quantidadeEstoque = ? WHERE cod = ?";
+        String deleteItemProduto = "DELETE FROM ItemProduto WHERE idPedido = ?";
+        String deletePedido = "DELETE FROM Pedidos WHERE id = ?";
 
-        try{
+        try {
             Database db = new Database();
             db.connection.setAutoCommit(false);
 
-            try{
-                try(PreparedStatement getId = db.connection.prepareStatement(getIdProduto)){
-                    getId.setString(1, cod);
-                    try(ResultSet result = getId.executeQuery()){
-                        idProduto = result.getInt("id");
+            try {
+                int idPedido = -1;
+                boolean isFinalizado = true;
+
+                // 1. Buscar ID do pedido e status
+                try (PreparedStatement stmt = db.connection.prepareStatement(getPedidoId)) {
+                    stmt.setString(1, codPedido);
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        if (rs.next()) {
+                            idPedido = rs.getInt("id");
+                            isFinalizado = rs.getInt("isFinalizado") == 1;
+                        } else {
+                            throw new RuntimeException("Pedido não encontrado para o código fornecido.");
+                        }
                     }
                 }
 
-                try(PreparedStatement getF = db.connection.prepareStatement(getIsFinalizado)){
-                    getF.setString(1, cod);
-                    try(ResultSet resultF = getF.executeQuery()){
-                        if (resultF.getInt("isFinalizado") == 0){
-                            Pedido pedido = new Pedido(this.get(cod));
-                            for(ItemProduto itemProduto : pedido.getProdutos()){
-                                for(ItemMaterial itemMaterial : itemProduto.getProduto().getItensMateriais()){
-                                    try(PreparedStatement getQuantidadeEstoque = db.connection.prepareStatement(getQuantidadeMaterialEstoque)){
-                                        getQuantidadeEstoque.setString(1, itemMaterial.getMaterial().getCod());
-                                        try(ResultSet resultSet = getQuantidadeEstoque.executeQuery()){
-                                            try(PreparedStatement updateMaterial = db.connection.prepareStatement(updateMaterialEstoque)){
-                                                int valorFinalEstoque = (resultSet.getInt("quantidadeEstoque") + (itemMaterial.getQuantidade() * itemProduto.getQuantidade()));
-                                                updateMaterial.setInt(1, valorFinalEstoque);
-                                                updateMaterial.setString(2, itemMaterial.getMaterial().getCod());
-                                                updateMaterial.executeUpdate();
-                                            }
+                // 2. Se não finalizado, restaurar o estoque
+                if (!isFinalizado) {
+                    Pedido pedido = new Pedido(this.get(codPedido));
+                    for (ItemProduto itemProduto : pedido.getProdutos()) {
+                        for (ItemMaterial itemMaterial : itemProduto.getProduto().getItensMateriais()) {
+                            String codMaterial = itemMaterial.getMaterial().getCod();
+
+                            try (PreparedStatement getEstoque = db.connection.prepareStatement(getQuantidadeEstoque)) {
+                                getEstoque.setString(1, codMaterial);
+                                try (ResultSet rs = getEstoque.executeQuery()) {
+                                    if (rs.next()) {
+                                        int estoqueAtual = rs.getInt("quantidadeEstoque");
+                                        int quantidadeRestaurar = itemMaterial.getQuantidade() * itemProduto.getQuantidade();
+
+                                        try (PreparedStatement update = db.connection.prepareStatement(updateEstoque)) {
+                                            update.setInt(1, estoqueAtual + quantidadeRestaurar);
+                                            update.setString(2, codMaterial);
+                                            update.executeUpdate();
                                         }
                                     }
                                 }
@@ -148,28 +161,24 @@ public class PedidoDao {
                     }
                 }
 
-
-                try(PreparedStatement deleteIP = db.connection.prepareStatement(deleteItemProdutosByIdProduto)){
-                    deleteIP.setInt(1, idProduto);
-                    deleteIP.executeUpdate();
+                try (PreparedStatement stmt = db.connection.prepareStatement(deleteItemProduto)) {
+                    stmt.setInt(1, idPedido);
+                    stmt.executeUpdate();
                 }
 
-                try(PreparedStatement deleteP = db.connection.prepareStatement(deletePedidoByCod)){
-                    deleteP.setInt(1, idProduto);
-                    deleteP.executeUpdate();
+                try (PreparedStatement stmt = db.connection.prepareStatement(deletePedido)) {
+                    stmt.setInt(1, idPedido);
+                    stmt.executeUpdate();
                 }
 
                 db.connection.commit();
-            }catch (SQLException e){
-                try{
-                    db.connection.rollback();
-                }catch (SQLException rollbackEx){
-                    throw new SQLException("Erro ao realizar rollback", rollbackEx);
-                }
-            }finally {
+            } catch (SQLException e) {
+                db.connection.rollback();
+                throw new RuntimeException("Erro ao deletar pedido, transação foi revertida.", e);
+            } finally {
                 db.connection.close();
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             throw new RuntimeException("Erro ao deletar pedido", e);
         }
     }
@@ -238,6 +247,7 @@ public class PedidoDao {
                 }catch (SQLException rollbackEx){
                     throw new SQLException("Erro ao realizar rollback", rollbackEx);
                 }
+                throw e;
             }finally {
                 db.connection.close();
             }
@@ -365,7 +375,7 @@ public class PedidoDao {
         return pedidos;
     }
 
-    public List<Pedido> getListPedidosFinalizados(){
+    public List<Pedido> getListFinalizados(){
         String getPedidoCod = """
                 select cod from pedidos where isFinalizado = 1;
                 """;
@@ -390,24 +400,51 @@ public class PedidoDao {
         return pedidos;
     }
 
+    public List<Pedido> getList(){
+        String getPedidoCod = """
+                select cod from pedidos;
+                """;
+
+        List<Pedido> pedidos = new ArrayList<>();
+
+        try{
+            Database db = new Database();
+            try{
+                try(ResultSet resultSet = db.connection.createStatement().executeQuery(getPedidoCod)){
+                    while (resultSet.next()){
+                        pedidos.add(this.get(resultSet.getString("cod")));
+                    }
+                }
+            }finally {
+                db.connection.close();
+            }
+        }catch (SQLException e){
+            throw new RuntimeException("Erro ao buscar pedidos");
+        }
+        return pedidos;
+    }
+
     public List<Pedido> getSearchByNomeCliente(String nomeCliente, Integer opcao){
         String getPedidoCodByNomeCliente1 = """
-                Select cod
-                from pedidos join clientes on pedidos.idCliente = clientes.id
-                where clientes.nome like ? and isFinalizado = 1;
-                """;
+                                        SELECT Pedidos.cod
+                                        FROM Pedidos
+                                        JOIN Clientes ON Pedidos.idCliente = Clientes.id
+                                        WHERE Clientes.nome LIKE ? AND Pedidos.isFinalizado = 1;
+                                        """;
 
         String getPedidoCodByNomeCliente2 = """
-                Select cod
-                from pedidos join clientes on pedidos.idCliente = clientes.id
-                where clientes.nome like ? and isFinalizado = 0;
-                """;
+                                        SELECT Pedidos.cod
+                                        FROM Pedidos
+                                        JOIN Clientes ON Pedidos.idCliente = Clientes.id
+                                        WHERE Clientes.nome LIKE ? AND Pedidos.isFinalizado = 0;
+                                        """;
 
         String getPedidoCodByNomeCliente3 = """
-                Select cod
-                from pedidos join clientes on pedidos.idCliente = clientes.id
-                where clientes.nome like ?;
-                """;
+                                        SELECT Pedidos.cod
+                                        FROM Pedidos
+                                        JOIN Clientes ON Pedidos.idCliente = Clientes.id
+                                        WHERE Clientes.nome LIKE ?;
+                                        """;
 
         List<Pedido> pedidos = new ArrayList<>();
 
@@ -460,7 +497,8 @@ public class PedidoDao {
         return pedidos;
     }
 
-    public List<Pedido> getSearchByDataEntrega(String nomeCliente, Integer opcao){
+    public List<Pedido> getSearchByDataEntrega(String dataEntrega, Integer opcao){
+
         String getPedidoCodByDataEntrega1 = """
                 Select cod
                 from pedidos
@@ -487,7 +525,7 @@ public class PedidoDao {
                 switch (opcao){
                     case 1:
                         try(PreparedStatement getP = db.connection.prepareStatement(getPedidoCodByDataEntrega1)){
-                            getP.setString(1, "%" + nomeCliente + "%");
+                            getP.setString(1, "%" + dataEntrega + "%");
                             try(ResultSet resultSet = getP.executeQuery()){
                                 while (resultSet.next()){
                                     pedidos.add(this.get(resultSet.getString("cod")));
@@ -498,7 +536,7 @@ public class PedidoDao {
 
                     case 2:
                         try(PreparedStatement getP = db.connection.prepareStatement(getPedidoCodByDataEntrega2)){
-                            getP.setString(1, "%" + nomeCliente + "%");
+                            getP.setString(1, "%" + dataEntrega + "%");
                             try(ResultSet resultSet = getP.executeQuery()){
                                 while (resultSet.next()){
                                     pedidos.add(this.get(resultSet.getString("cod")));
@@ -509,7 +547,7 @@ public class PedidoDao {
 
                     case 3:
                         try(PreparedStatement getP = db.connection.prepareStatement(getPedidoCodByDataEntrega3)){
-                            getP.setString(1, "%" + nomeCliente + "%");
+                            getP.setString(1, "%" + dataEntrega + "%");
                             try(ResultSet resultSet = getP.executeQuery()){
                                 while (resultSet.next()){
                                     pedidos.add(this.get(resultSet.getString("cod")));
@@ -524,9 +562,51 @@ public class PedidoDao {
             }finally {
                 db.connection.close();
             }
-        }catch (SQLException e){
-            throw new RuntimeException("Erro ao realizar busca de pedido por nome de cliente");
+        }catch (SQLException e) {
+            throw new RuntimeException("Erro ao realizar busca de pedido por data de entrega");
         }
         return pedidos;
+    }
+
+    public void finalizar(String cod){
+        /*
+        String updateStatus = "update Pedidos set Pedidos.isFinalizado = ? where Pedidos.cod = ?";
+        try{
+            Database db = new Database();
+            db.connection.setAutoCommit(false);
+            try{
+                try(PreparedStatement updateP = db.connection.prepareStatement(updateStatus)){
+                    updateP.setInt(1, 1);
+                    updateP.setString(2, cod);
+                    updateP.executeUpdate();
+                }
+                db.connection.commit();
+            } catch (SQLException e) {
+                try{
+                    db.connection.rollback();
+                }catch (SQLException rollbackEx){
+                    throw new SQLException("Erro ao realizar rollback");
+                }
+                throw e;
+            }finally {
+                db.connection.close();
+            }
+        }catch (SQLException e){
+            throw new RuntimeException("Erro ao finalizar pedido");
+        }
+         */
+
+
+        try{
+            Database db = new Database();
+            PreparedStatement stm = db.connection.prepareStatement("update Pedidos set isFinalizado = 1 where cod = ?");
+            stm.setString(1, cod);
+            stm.executeUpdate();
+            stm.close();
+            db.connection.close();
+        }catch (SQLException e){
+            throw new RuntimeException("Erro ao finalizar pedido: " + e);
+        }
+
     }
 }

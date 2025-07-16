@@ -2,6 +2,7 @@ package camadas;
 
 import camadas.controller.ClienteController;
 import camadas.controller.MaterialController;
+import camadas.controller.PedidoController;
 import camadas.controller.ProdutoController;
 import camadas.model.domain.Material;
 
@@ -17,11 +18,12 @@ public class Main {
         ClienteController clienteController = new ClienteController();
         MaterialController materialController = new MaterialController();
         ProdutoController produtoController = new ProdutoController();
+        PedidoController pedidoController = new PedidoController();
 
         Scanner scanner = new Scanner(System.in);
         String menuPrincipal = """
                 ------------MENU------------
-                - 1) Vendas
+                - 1) Pedidos
                 - 2) Produtos
                 - 3) Materiais
                 - 4) Clientes
@@ -54,6 +56,16 @@ public class Main {
                 ----------Produtos----------
                 - 1) Cadastrar
                 - 2) Atualizar
+                - 3) Deletar
+                - 4) Ver todos
+                - 5) Procurar
+                - 0) Voltar...
+                ---------------------------
+                """;
+        String subMenuPedidos = """
+                ----------Pedidos----------
+                - 1) Cadastrar
+                - 2) Finalizar
                 - 3) Deletar
                 - 4) Ver todos
                 - 5) Procurar
@@ -150,6 +162,36 @@ public class Main {
                                 break;
                             case 5:
                                 produtoController.searchProduto();
+                                break;
+                            case 0:
+                                System.out.println("Voltando...");
+                                break;
+                            default:
+                                System.err.println("Opção inválida!");
+                        }
+                    } while (subOpcao != 0);
+                    break;
+
+                case 1:
+                    do{
+                        System.out.println(subMenuPedidos);
+                        System.out.println("Informe um número: ");
+                        subOpcao = scanner.nextInt();
+                        switch (subOpcao) {
+                            case 1:
+                                pedidoController.cadastrar();
+                                break;
+                            case 2:
+                                pedidoController.finalizar();
+                                break;
+                            case 3:
+                                pedidoController.deletar();
+                                break;
+                            case 4:
+                                pedidoController.getList();
+                                break;
+                            case 5:
+                                pedidoController.search();
                                 break;
                             case 0:
                                 System.out.println("Voltando...");

@@ -77,7 +77,7 @@ public final class Database{
             idPedido integer not null,
             quantidade INTEGER NOT NULL CHECK(quantidade > 0),
             FOREIGN KEY (idProduto) REFERENCES Produtos(id),
-            foreign key (idVenda) references Vendas (id)
+            foreign key (idPedido) references Pedidos (id)
             );
             """);
 

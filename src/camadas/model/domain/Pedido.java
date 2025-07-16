@@ -6,6 +6,9 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,13 +22,23 @@ public class Pedido {
     private String cod;
 
     public Pedido(String dataEntrega, List<ItemProduto> produtos, Cliente cliente) {
-        gerarDataDeRegistro();
+        setDataDeRegistro();
         setDataEntrega(dataEntrega);
         setProdutos(produtos);
         setCliente(cliente);
         gerarValorTotal();
         setFinalizado(false);
         setCod(cliente.getNome() + produtos.getFirst().getProduto().getDescricao() + dataEntrega, 6);
+    }
+
+    public Pedido(List<ItemProduto> produtos, Cliente cliente, Boolean isFinalizado) {
+        setDataDeRegistro();
+        setDataEntrega();
+        setProdutos(produtos);
+        setCliente(cliente);
+        gerarValorTotal();
+        setFinalizado(isFinalizado);
+        setCod(cliente.getNome() + produtos.getFirst().getProduto().getDescricao() + dataDeRegistro, 6);
     }
 
     public Pedido(Cliente cliente, List<ItemProduto> produtos, Float valorTotal, LocalDateTime dataDeRegistro, LocalDate dataEntrega, Boolean isFinalizado, String cod){
@@ -85,9 +98,11 @@ public class Pedido {
     }
 
     public void gerarValorTotal() {
-        for(ItemProduto item : this.produtos){
-            this.valorTotal += (item.getProduto().getValor() * item.getQuantidade());
+        Float valor = 0f;
+        for(ItemProduto item : this.getProdutos()){
+            valor += (item.getProduto().getValor() * item.getQuantidade());
         }
+        this.valorTotal = valor;
     }
 
     public void setValorTotal(Float valorTotal){
@@ -99,24 +114,39 @@ public class Pedido {
     }
 
     public void setDataEntrega(String dataEntrega) throws IllegalArgumentException{
-        try{
-            this.dataEntrega = LocalDate.parse(dataEntrega, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        } catch (IllegalArgumentException e){
-            throw new IllegalArgumentException("Valor de data de entrega informado está incorreto!");
+        DateTimeFormatter formatoIso = DateTimeFormatter.ISO_LOCAL_DATE; // yyyy-MM-dd
+        DateTimeFormatter formatoBr = DateTimeFormatter.ofPattern("dd/MM/yyyy"); // dd/MM/yyyy
+
+        try {
+            this.dataEntrega = LocalDate.parse(dataEntrega, formatoIso);
+        } catch (DateTimeParseException e1) {
+            try {
+                this.dataEntrega = LocalDate.parse(dataEntrega, formatoBr);
+            } catch (DateTimeParseException e2) {
+                throw new IllegalArgumentException("Formato de data inválido: " + dataEntrega);
+            }
         }
+    }
+
+    public void setDataEntrega(){
+        this.dataEntrega = LocalDate.now();
     }
 
     public LocalDateTime getDataDeRegistro() {
         return dataDeRegistro;
     }
 
-    public void gerarDataDeRegistro() {
+    public void setDataDeRegistro() {
         this.dataDeRegistro = LocalDateTime.now();
     }
 
     public void setDataDeRegistro(String dataRegistro){
         try{
-            this.dataDeRegistro = LocalDateTime.parse(dataRegistro, DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+            DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                    .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+                    .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
+                    .toFormatter();
+            this.dataDeRegistro = LocalDateTime.parse(dataRegistro, formatter);
         } catch (IllegalArgumentException e){
             throw new IllegalArgumentException("Valor de data de entrega informado está incorreto!");
         }
