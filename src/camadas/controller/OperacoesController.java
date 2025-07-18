@@ -21,15 +21,15 @@ public class OperacoesController {
         }
     }
 
-    public void getFaturamentoBruto(){
+    public void getFaturamentoMesAtual(){
         try{
-            view.printFaturamentoBruto(dao.getFaturamentoBrutoMesAtual());
+            view.printFaturamentoMensal(dao.getFaturamentoBrutoMesAtual(), dao.getFaturamentoLiquidoMesAtual());
         } catch (RuntimeException e) {
             view.printFalha(e);
         }
     }
 
-    public void getFaturamentoBrutoPorPeriodo(){
+    public void getFaturamentoPorPeriodo(){
         try{
             SimpleDateFormat formatoOriginal = new SimpleDateFormat("dd/MM/yyyy");
             SimpleDateFormat novoFormato = new SimpleDateFormat("yyyy-MM-dd");
@@ -37,7 +37,10 @@ public class OperacoesController {
             Date dataInicial = formatoOriginal.parse(view.readDataInicial());
             Date dataFinal = formatoOriginal.parse(view.readDataFinal());
 
-            view.printFaturamentoBrutoPorPeriodo(dao.getFaturamentoBrutoPorPeriodo(novoFormato.format(dataInicial), novoFormato.format(dataFinal)));
+            String dataInicialFormatada = novoFormato.format(dataInicial);
+            String dataFinalFormatada = novoFormato.format(dataFinal);
+
+            view.printFaturamentoPorPeriodo(dao.getFaturamentoBrutoPorPeriodo(dataInicialFormatada, dataFinalFormatada), dao.getFaturamentoLiquidoPorPeriodo(dataInicialFormatada, dataFinalFormatada));
         }catch (RuntimeException | ParseException e){
             view.printFalha(e);
         }

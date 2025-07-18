@@ -35,11 +35,31 @@ public class OperacoesView {
         return scanner.nextLine();
     }
 
-    public void printFaturamentoBrutoPorPeriodo(Float faturamentoBrutoPorPeriodo) {
+    private void printFaturamentoBrutoPorPeriodo(Float faturamentoBrutoPorPeriodo) {
         System.out.println("Faturamento bruto por período informado: $" + faturamentoBrutoPorPeriodo);
     }
 
     public void printValorTotalCustoMateriais(Float custoTotalMateriaisNaoUtilizados) {
-        System.out.println("Valor total do custo de materiais restantes: $" + custoTotalMateriaisNaoUtilizados);
+        System.out.println("Valor que deve ser obtido para pagar o custo dos materias restantes: $" + custoTotalMateriaisNaoUtilizados);
+    }
+
+    private void printFaturamentoLiquidoMes(Float faturamentoLiquidoMesAtual) {
+        System.out.println("Faturamento liquido do mês atual: $" + faturamentoLiquidoMesAtual);
+    }
+
+    private void printFaturamentoLiquidoPorPeriodo(Float faturamento){
+        System.out.println("Faturamento liquido por período informado: $" + faturamento);
+    }
+
+    public void printFaturamentoMensal(Float bruto, Float liquido){
+        printFaturamentoBruto(bruto);
+        printFaturamentoLiquidoMes(liquido);
+        System.out.println();
+    }
+
+    public void printFaturamentoPorPeriodo(Float bruto, Float liquido){
+        printFaturamentoBrutoPorPeriodo(bruto);
+        printFaturamentoLiquidoPorPeriodo(liquido);
+        System.out.println();
     }
 }

@@ -103,12 +103,21 @@ public class OperacoesDao {
         LocalDate fimMes = inicioMes.withDayOfMonth(inicioMes.lengthOfMonth());
 
         String getFaturamentoLiquido = """
-                select
-                    valorTotal - sum((pedidos.valor - sum(materiais.valor) as valorLiquido
-                from itemProduto join pedidos on itemproduto.idpedido = pedidos.id
-                        join itemMaterial on itemProduto.idProduto = itemMaterial.idProduto
-                        join materiais on itemMaterial.idMaterial = materiais.id
-                where pedidos.isFinalizado = 1 and dataRegistro BETWEEN ? AND ?;
+                SELECT
+                  SUM(P.valorTotal) AS total_vendas,
+                  SUM(
+                    IM.quantidade * M.valor * IP.quantidade
+                  ) AS total_materiais,
+                  SUM(P.valorTotal) - SUM(
+                    IM.quantidade * M.valor * IP.quantidade
+                  ) AS valor_liquido
+                FROM Pedidos P
+                JOIN ItemProduto IP ON IP.idPedido = P.id
+                JOIN Produtos PR ON PR.id = IP.idProduto
+                JOIN ItemMaterial IM ON IM.idProduto = PR.id
+                JOIN Materiais M ON M.id = IM.idMaterial
+                WHERE P.isFinalizado = 1
+                  AND date(P.dataRegistro) BETWEEN date(?) AND date(?);
                 """;
         Float valorTotalLiquido = 0f;
 
@@ -119,7 +128,7 @@ public class OperacoesDao {
             stm.setString(2, fimMes.toString());
             ResultSet resultSet = stm.executeQuery();
             while(resultSet.next()){
-                valorTotalLiquido += resultSet.getFloat("valorLiquido");
+                valorTotalLiquido += resultSet.getFloat("valor_Liquido");
             }
             stm.close();
             resultSet.close();
@@ -133,12 +142,21 @@ public class OperacoesDao {
 
     public Float getFaturamentoLiquidoPorPeriodo(String dataInicial, String dataFinal){
         String getFaturamentoLiquido = """
-                select
-                    valorTotal - sum((pedidos.valor - sum(materiais.valor) as valorLiquido
-                from itemProduto join pedidos on itemproduto.idpedido = pedidos.id
-                        join itemMaterial on itemProduto.idProduto = itemMaterial.idProduto
-                        join materiais on itemMaterial.idMaterial = materiais.id
-                where pedidos.isFinalizado = 1 and dataRegistro BETWEEN ? AND ?;
+                               SELECT
+                  SUM(P.valorTotal) AS total_vendas,
+                  SUM(
+                    IM.quantidade * M.valor * IP.quantidade
+                  ) AS total_materiais,
+                  SUM(P.valorTotal) - SUM(
+                    IM.quantidade * M.valor * IP.quantidade
+                  ) AS valor_liquido
+                FROM Pedidos P
+                JOIN ItemProduto IP ON IP.idPedido = P.id
+                JOIN Produtos PR ON PR.id = IP.idProduto
+                JOIN ItemMaterial IM ON IM.idProduto = PR.id
+                JOIN Materiais M ON M.id = IM.idMaterial
+                WHERE P.isFinalizado = 1
+                  AND date(P.dataRegistro) BETWEEN date(?) AND date(?);
                 """;
         Float valorTotalLiquido = 0f;
 
@@ -149,7 +167,7 @@ public class OperacoesDao {
             stm.setString(2, dataFinal);
             ResultSet resultSet = stm.executeQuery();
             while(resultSet.next()){
-                valorTotalLiquido += resultSet.getFloat("valorLiquido");
+                valorTotalLiquido += resultSet.getFloat("valor_Liquido");
             }
             stm.close();
             resultSet.close();

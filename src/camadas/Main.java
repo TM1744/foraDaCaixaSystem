@@ -74,13 +74,13 @@ public class Main {
                 """;
 
         String subMenuOperacoes = """
-                ----------Pedidos----------
+                ----------Operações----------
                 - 1) Definir margem de lucro
-                - 2) Ver faturamento bruto do mês atual
-                - 3) Ver faturamento bruto por período
-                - 4) Ver custo total dos materiais restantes
+                - 2) Ver faturamento do mês atual
+                - 3) Ver faturamento por período
+                - 4) Ver custo a ser pagos
                 - 0) Voltar...
-                ---------------------------
+                -----------------------------
                 """;
         Integer opcao = 0;
         Integer subOpcao = 0;
@@ -100,15 +100,13 @@ public class Main {
                                 operacoesController.definirMargemLucro();
                                 break;
                             case 2:
-                                operacoesController.getFaturamentoBruto();
+                                operacoesController.getFaturamentoMesAtual();
                                 break;
                             case 3:
-                                operacoesController.getFaturamentoBrutoPorPeriodo();
+                                operacoesController.getFaturamentoPorPeriodo();
                                 break;
                             case 4:
                                 operacoesController.getValorTotalCustoMateriais();
-                                break;
-                            case 5:
                                 break;
                             case 0:
                                 System.out.println("Voltando...");
