@@ -41,13 +41,13 @@ public class ProdutoController {
                 valorMinimo += item.getMaterial().getValor() * item.getQuantidade();
             }
             Float margemLucro = produtoDao.getMargemLucro();
-            Float valorSugerido = valorMinimo + (valorMinimo * (margemLucro / 100));
+            Float valorSugerido = valorMinimo * (1 + (margemLucro / 100));
             String valorMinimoFormatado = String.format("%.2f", valorMinimo);
             String margemLucroFormatado = String.format("%.1f", margemLucro);
             String valorSugeridoFormatado = String.format("%.2f", valorSugerido);
             Produto produto = new Produto(
                     produtoView.readDescricao(),
-                    produtoView.readValor(valorMinimoFormatado, margemLucroFormatado, valorMinimoFormatado),
+                    produtoView.readValor(valorMinimoFormatado, margemLucroFormatado, valorSugeridoFormatado),
                     materialSet,
                     margemLucro
             );

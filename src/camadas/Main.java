@@ -1,11 +1,10 @@
 package camadas;
 
-import camadas.controller.ClienteController;
-import camadas.controller.MaterialController;
-import camadas.controller.PedidoController;
-import camadas.controller.ProdutoController;
+import camadas.controller.*;
 import camadas.model.domain.Material;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Scanner;
 
 public class Main {
@@ -19,6 +18,7 @@ public class Main {
         MaterialController materialController = new MaterialController();
         ProdutoController produtoController = new ProdutoController();
         PedidoController pedidoController = new PedidoController();
+        OperacoesController operacoesController = new OperacoesController();
 
         Scanner scanner = new Scanner(System.in);
         String menuPrincipal = """
@@ -72,6 +72,15 @@ public class Main {
                 - 0) Voltar...
                 ---------------------------
                 """;
+
+        String subMenuOperacoes = """
+                ----------Pedidos----------
+                - 1) Definir margem de lucro
+                - 2) Ver faturamento bruto do mês atual
+                - 3) Ver faturamento bruto por período
+                - 0) Voltar...
+                ---------------------------
+                """;
         Integer opcao = 0;
         Integer subOpcao = 0;
 
@@ -80,6 +89,33 @@ public class Main {
             System.out.println("Informe um número: ");
             opcao = scanner.nextInt();
             switch (opcao) {
+                case 5:
+                    do {
+                        System.out.println(subMenuOperacoes);
+                        System.out.println("Informe um número: ");
+                        subOpcao = scanner.nextInt();
+                        switch (subOpcao) {
+                            case 1:
+                                operacoesController.definirMargemLucro();
+                                break;
+                            case 2:
+                                operacoesController.getFaturamentoBruto();
+                                break;
+                            case 3:
+                                operacoesController.getFaturamentoBrutoPorPeriodo();
+                                break;
+                            case 4:
+                                break;
+                            case 5:
+                                break;
+                            case 0:
+                                System.out.println("Voltando...");
+                                break;
+                            default:
+                        }
+                    } while (subOpcao != 0);
+                    break;
+
                 case 4:
                     do {
                         System.out.println(subMenuClientes);

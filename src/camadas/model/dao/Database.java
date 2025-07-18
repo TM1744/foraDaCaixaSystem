@@ -12,6 +12,9 @@ public final class Database{
         try {
             this.connection = DriverManager.getConnection(dns);
             Statement stm = connection.createStatement();
+
+            this.connection.createStatement().execute("PRAGMA busy_timeout = 5000");
+
             stm.executeUpdate("""
                     PRAGMA foreign_keys = ON
                     """);
@@ -84,9 +87,17 @@ public final class Database{
             stm.executeUpdate("""
                     create table if not exists MargemDeLucro (
                     id integer primary key autoincrement,
-                    porcentagem real not null default 30
+                    porcentagem real not null default 0
                     );
                     """);
+
+            stm.executeUpdate("""
+                    INSERT INTO MargemDeLucro (porcentagem)
+                    SELECT 0
+                    WHERE NOT EXISTS (
+                      SELECT 1 FROM MargemDeLucro
+                    );
+                   """);
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
