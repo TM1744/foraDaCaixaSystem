@@ -45,7 +45,7 @@ public class PedidoView {
     }
 
     public void printSucesso() {
-        System.out.println("Sucessoa ao realizar operação!");
+        System.out.println("Sucesso ao realizar operação!");
     }
 
     public int isFinalizado() {
@@ -65,14 +65,14 @@ public class PedidoView {
         }
     }
 
-    public boolean isByNomeCliente() {
+    public Integer isByNomeCliente() {
         scanner = new Scanner(System.in);
         System.out.println("""
                 Que tipo de busca deseja fazer?
                 1- Por nome do cliente
                 2- Por data de entrega
                 """);
-        return scanner.nextInt() == 1;
+        return scanner.nextInt();
     }
 
     public Integer readQuantidadeItemProduto() {

@@ -38,4 +38,8 @@ public class OperacoesView {
     public void printFaturamentoBrutoPorPeriodo(Float faturamentoBrutoPorPeriodo) {
         System.out.println("Faturamento bruto por período informado: $" + faturamentoBrutoPorPeriodo);
     }
+
+    public void printValorTotalCustoMateriais(Float custoTotalMateriaisNaoUtilizados) {
+        System.out.println("Valor total do custo de materiais restantes: $" + custoTotalMateriaisNaoUtilizados);
+    }
 }

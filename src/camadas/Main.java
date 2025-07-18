@@ -12,13 +12,13 @@ public class Main {
         function1();
     }
 
-
     public static void function1() {
         ClienteController clienteController = new ClienteController();
         MaterialController materialController = new MaterialController();
         ProdutoController produtoController = new ProdutoController();
         PedidoController pedidoController = new PedidoController();
         OperacoesController operacoesController = new OperacoesController();
+
 
         Scanner scanner = new Scanner(System.in);
         String menuPrincipal = """
@@ -78,6 +78,7 @@ public class Main {
                 - 1) Definir margem de lucro
                 - 2) Ver faturamento bruto do mês atual
                 - 3) Ver faturamento bruto por período
+                - 4) Ver custo total dos materiais restantes
                 - 0) Voltar...
                 ---------------------------
                 """;
@@ -105,6 +106,7 @@ public class Main {
                                 operacoesController.getFaturamentoBrutoPorPeriodo();
                                 break;
                             case 4:
+                                operacoesController.getValorTotalCustoMateriais();
                                 break;
                             case 5:
                                 break;

@@ -101,14 +101,16 @@ public class PedidoController {
     }
 
     public void search(){
-        if(pedidoView.isByNomeCliente()){
+        Integer valor = pedidoView.isByNomeCliente();
+
+        if(valor == 1){
             List<Pedido> pedidos = pedidoDao.getSearchByNomeCliente(clienteView.readNome(), pedidoView.isFinalizado());
             if(pedidos.isEmpty()){
                 throw new RuntimeException("Nenhum produto encontrado com a descrição informada");
             }else {
                 pedidoView.printPedidoList(pedidos);
             }
-        }else{
+        }if(valor == 2){
             String dataFormatada;
             try {
                 SimpleDateFormat formatoOriginal = new SimpleDateFormat("dd/MM/yyyy");
@@ -124,6 +126,9 @@ public class PedidoController {
             }else {
                 pedidoView.printPedidoList(pedidos);
             }
+        }
+        else{
+            throw new RuntimeException("Valor informado não corresponde as opções");
         }
     }
 

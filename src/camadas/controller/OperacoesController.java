@@ -3,6 +3,7 @@ package camadas.controller;
 import camadas.model.dao.OperacoesDao;
 import camadas.view.OperacoesView;
 
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,6 +42,16 @@ public class OperacoesController {
             view.printFalha(e);
         }
     }
+
+    public void getValorTotalCustoMateriais(){
+        try{
+            view.printValorTotalCustoMateriais(dao.getCustoTotalMateriaisNaoUtilizados());
+        }catch (RuntimeException e){
+            view.printFalha(e);
+        }
+    }
+
+
 
 
 

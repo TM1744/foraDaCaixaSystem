@@ -28,7 +28,7 @@ public class Pedido {
         setCliente(cliente);
         gerarValorTotal();
         setFinalizado(false);
-        setCod(cliente.getNome() + produtos.getFirst().getProduto().getDescricao() + dataEntrega, 6);
+        setCod(cliente.getNome() + produtos.getFirst().getProduto().getDescricao() + dataEntrega + this.getDataDeRegistro(), 6);
     }
 
     public Pedido(List<ItemProduto> produtos, Cliente cliente, Boolean isFinalizado) {
@@ -148,7 +148,7 @@ public class Pedido {
                     .toFormatter();
             this.dataDeRegistro = LocalDateTime.parse(dataRegistro, formatter);
         } catch (IllegalArgumentException e){
-            throw new IllegalArgumentException("Valor de data de entrega informado está incorreto!");
+            throw new IllegalArgumentException("Valor de data de registro informada está incorreto!");
         }
     }
 
