@@ -14,9 +14,9 @@ Tecnologias utilizadas:
 
 Como instalar:
 
-Para utilizar o sistema, será necessário instalar o JDK (versão mínima: 21) e executar o arquivo .jar com o comando: "java -jar " no diretório onde o arquivo .jar estiver, após isso, o sistema iniciará no terminal. Realize qualquer
+Para utilizar o sistema, será necessário instalar o JDK (versão mínima: 21) e executar o arquivo .jar com o comando: "java -jar lojaZSystem.jar" no diretório onde o arquivo .jar estiver, após isso, o sistema iniciará no terminal. Realize qualquer
 cadastramento, seja de cliente ou material, e uma pasta com o banco de dados vai ser gerado.
 
 Como utilizar:
 
-Após "instalado", o sistema funcionará normalmente, podendo ser iniciado toda vez por terminal com o comando: "java -jar ". Se prefirir, você também pode criar um arquivo .bat para inicia-lo sempre com dois cliques.
+Após "instalado", o sistema funcionará normalmente, podendo ser iniciado toda vez por terminal com o comando: "java -jar lojaZSystem.jar". Se prefirir, você também pode criar um arquivo .bat para inicia-lo sempre com dois cliques.
